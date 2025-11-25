@@ -64,6 +64,7 @@ void CTestingButtonDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TAB1, tabCtrl);
 	DDX_Control(pDX, IDC_PANEL_VIEW, m_myPanel);
 	DDX_Control(pDX, IDC_CARD_PANEL, m_cardCtrl);
+	DDX_Control(pDX, IDC_CUSTOM_CARD, cardView);
 }
 
 BEGIN_MESSAGE_MAP(CTestingButtonDlg, CDialogEx)
@@ -136,7 +137,7 @@ BOOL CTestingButtonDlg::OnInitDialog()
 
 	//tabCtrl.
 
-	m_brushBack.CreateSolidBrush(RGB(255, 255, 255));
+	m_brushBack.CreateSolidBrush(RGB(244, 247, 249)); //235, 236, 237
 
 
 

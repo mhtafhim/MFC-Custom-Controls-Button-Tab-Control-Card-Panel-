@@ -69,7 +69,7 @@ void CCardPanel::OnPaint()
 
     // 1. FILL BACKGROUND 
     // Match this color to your Main Dialog Background (Light Blue)
-    pDC->FillSolidRect(rectClient, RGB(255, 255, 255));
+    pDC->FillSolidRect(rectClient, RGB(244, 247, 249)); //235, 236, 237
 
     Graphics graphics(pDC->GetSafeHdc());
     graphics.SetSmoothingMode(SmoothingModeAntiAlias);
@@ -84,12 +84,12 @@ void CCardPanel::OnPaint()
     // 3. DRAW SHADOW (Simple soft shadow)
     {
         RectF r = rectWhite;
-        r.Inflate(4.0f, 4.0f); // Make bigger
-        r.Offset(-2.0, -2.0);     // Move down
+        r.Inflate(1.8f, 1.8f); // Make bigger
+        r.Offset(0, 0);     // Move down
 
         GraphicsPath path;
-        AddRoundedRectToPath(path, r, radius + 4.0f); // Radius + Inflate
-        SolidBrush b(Color(40, 0, 0, 0)); // Transparent Black
+        AddRoundedRectToPath(path, r, radius + 2.0f); // Radius + Inflate
+        SolidBrush b(Color(100, 235, 238, 244)); // Transparent Black
         graphics.FillPath(&b, &path);
     }
 
@@ -97,7 +97,7 @@ void CCardPanel::OnPaint()
     GraphicsPath path;
     AddRoundedRectToPath(path, rectWhite, radius);
 
-    SolidBrush brushWhite(Color(255, 255, 255, 255));
+    SolidBrush brushWhite(Color(255, 255, 255, 255)); //235, 236, 237
     graphics.FillPath(&brushWhite, &path);
 
     Pen penBorder(Color(255, 220, 220, 220), 1.0f);

@@ -7,6 +7,7 @@
 #include "MyListCtrl.h"
 #include "CardPanel.h"
 #include "FlatTabCtrl.h"
+#include "ModernTabCtrl.h"
 
 // CTestingButtonDlg dialog
 class CTestingButtonDlg : public CDialogEx
@@ -40,7 +41,7 @@ public:
 	CIconButton test_button;
 	CMyListCtrl tableCtrl;
 
-	CFlatTabCtrl tabCtrl;
+	CModernTabCtrl tabCtrl;
 
 
 	CBrush m_brushBack;
@@ -50,4 +51,5 @@ public:
 	afx_msg void OnStnClickedPanelView();
 	CCardPanel m_cardCtrl;
 	afx_msg void OnBnClickedButton3();
+	CCardPanel cardView;
 };

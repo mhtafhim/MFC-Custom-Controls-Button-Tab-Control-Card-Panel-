@@ -184,9 +184,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CardPanel.h" />
+    <ClInclude Include="CardPanelWithPictureControl.h" />
     <ClInclude Include="FlatTabCtrl.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="IconButton.h" />
+    <ClInclude Include="ModernTabCtrl.h" />
     <ClInclude Include="MyHeaderCtrl.h" />
     <ClInclude Include="MyListCtrl.h" />
     <ClInclude Include="pch.h" />
@@ -197,8 +199,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CardPanel.cpp" />
+    <ClCompile Include="CardPanelWithPictureControl.cpp" />
     <ClCompile Include="FlatTabCtrl.cpp" />
     <ClCompile Include="IconButton.cpp" />
+    <ClCompile Include="ModernTabCtrl.cpp" />
     <ClCompile Include="MyHeaderCtrl.cpp" />
     <ClCompile Include="MyListCtrl.cpp" />
     <ClCompile Include="pch.cpp">

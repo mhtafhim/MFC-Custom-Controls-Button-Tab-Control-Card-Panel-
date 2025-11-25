@@ -48,6 +48,12 @@
     <ClInclude Include="FlatTabCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ModernTabCtrl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CardPanelWithPictureControl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestingButton.cpp">
@@ -72,6 +78,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FlatTabCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ModernTabCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CardPanelWithPictureControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
