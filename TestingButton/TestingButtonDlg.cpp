@@ -65,6 +65,14 @@ void CTestingButtonDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PANEL_VIEW, m_myPanel);
 	DDX_Control(pDX, IDC_CARD_PANEL, m_cardCtrl);
 	DDX_Control(pDX, IDC_CUSTOM_CARD, cardView);
+	DDX_Control(pDX, IDC_BUTTON_TOP_LEFT, topLeftButton);
+	DDX_Control(pDX, IDC_BUTTON_UP, upButton);
+	DDX_Control(pDX, IDC_BUTTON_TOP_RIGHT, topRiightButton);
+	DDX_Control(pDX, IDC_BUTTON_LEFT, leftIcon);
+	DDX_Control(pDX, IDC_BUTTON_RIGHT, rightButton);
+	DDX_Control(pDX, IDC_BUTTON_BOTTOM_LEFT, bottomLeftButton);
+	DDX_Control(pDX, IDC_BUTTON_DOWN, downButton);
+	DDX_Control(pDX, IDC_BUTTON_BOTTOM_RIGHT, bottomRightButton);
 }
 
 BEGIN_MESSAGE_MAP(CTestingButtonDlg, CDialogEx)
@@ -74,6 +82,7 @@ BEGIN_MESSAGE_MAP(CTestingButtonDlg, CDialogEx)
 	ON_WM_CTLCOLOR()
 	ON_STN_CLICKED(IDC_PANEL_VIEW, &CTestingButtonDlg::OnStnClickedPanelView)
 	ON_BN_CLICKED(IDC_BUTTON3, &CTestingButtonDlg::OnBnClickedButton3)
+	ON_BN_CLICKED(IDC_BUTTON_TEST, &CTestingButtonDlg::OnBnClickedButtonTest)
 END_MESSAGE_MAP()
 
 
@@ -110,10 +119,10 @@ BOOL CTestingButtonDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 
-	test_button.SetIconByID(IDR_MAINFRAME);
+//	test_button.SetIconByID(IDR_MAINFRAME);
 	//test_button.EnableWindowsTheming(FALSE);
-	test_button.SetFaceColor(RGB(240, 240, 240));
-	test_button.SetTextColor(RGB(0, 0, 0));
+//	test_button.SetFaceColor(RGB(240, 240, 240));
+//	test_button.SetTextColor(RGB(0, 0, 0));
 
 	//test_button.EnableWindowsTheming(TRUE);
 
@@ -140,10 +149,30 @@ BOOL CTestingButtonDlg::OnInitDialog()
 	m_brushBack.CreateSolidBrush(RGB(244, 247, 249)); //235, 236, 237
 
 
+	setButtonIcon();
+
+
+	test_button.SetColor(RGB(34, 139, 34), RGB(50, 205, 50), RGB(255, 255, 255));
+	test_button.SetTextProperties(14, true, _T("Arial")); 
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
+
+void CTestingButtonDlg::setButtonIcon()
+{
+	 //topLeftButton.SetIconByID(IDI_ICON_TOP_LEFT);
+	 upButton.SetIconByID(IDI_ICON9);
+	// topRiightButton.SetIconByID(IDI_ICON_TOP_RIGHT);
+	 leftIcon.SetIconByID(IDI_ICON7);
+	 rightButton.SetIconByID(IDI_ICON8);
+	// bottomLeftButton.SetIconByID(IDI_ICON_BUTTON_LEFT);
+	 downButton.SetIconByID(IDI_ICON6);
+	// bottomRightButton.SetIconByID(IDI_ICON_BOTTOM_RIGHT);
+
+
+
+}
 
 
 
@@ -275,5 +304,10 @@ void CTestingButtonDlg::OnStnClickedPanelView()
 void CTestingButtonDlg::OnBnClickedButton3()
 {
 	AfxMessageBox(_T("Button 3 clicked"));
+	// TODO: Add your control notification handler code here
+}
+
+void CTestingButtonDlg::OnBnClickedButtonTest()
+{
 	// TODO: Add your control notification handler code here
 }

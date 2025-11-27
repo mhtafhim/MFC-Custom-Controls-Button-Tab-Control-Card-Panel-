@@ -54,6 +54,9 @@
     <ClInclude Include="CardPanelWithPictureControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ColorButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestingButton.cpp">
@@ -86,6 +89,9 @@
     <ClCompile Include="CardPanelWithPictureControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ColorButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TestingButton.rc">
@@ -99,6 +105,51 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\TestingButton.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\icon1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="icon\bottom left.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="icon\bottom right.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="icon\down.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="icon\left.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="icon\right.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="icon\top left.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="icon\top right.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="icon\up.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="icon\left (1).ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="icon\right (1).ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="blue_icon\down.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="blue_icon\left.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="blue_icon\right.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="blue_icon\up.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

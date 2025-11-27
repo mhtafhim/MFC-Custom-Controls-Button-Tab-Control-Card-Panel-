@@ -8,6 +8,7 @@
 #include "CardPanel.h"
 #include "FlatTabCtrl.h"
 #include "ModernTabCtrl.h"
+#include "ColorButton.h"
 
 // CTestingButtonDlg dialog
 class CTestingButtonDlg : public CDialogEx
@@ -31,6 +32,7 @@ protected:
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
+	void setButtonIcon();
 	void PopulateList();
 	HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
@@ -38,7 +40,8 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	CIconButton test_button;
+	CColorButton test_button;
+
 	CMyListCtrl tableCtrl;
 
 	CModernTabCtrl tabCtrl;
@@ -52,4 +55,13 @@ public:
 	CCardPanel m_cardCtrl;
 	afx_msg void OnBnClickedButton3();
 	CCardPanel cardView;
+	CIconButton topLeftButton;
+	CIconButton upButton;
+	CIconButton topRiightButton;
+	CIconButton leftIcon;
+	CIconButton rightButton;
+	CIconButton bottomLeftButton;
+	CIconButton downButton;
+	CIconButton bottomRightButton;
+	afx_msg void OnBnClickedButtonTest();
 };

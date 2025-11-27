@@ -29,4 +29,11 @@ protected:
     afx_msg BOOL OnEraseBkgnd(CDC* pDC);
     afx_msg void OnMouseMove(UINT nFlags, CPoint point);
     afx_msg void OnMouseLeave();
+    afx_msg void OnPaint();      // <--- ADD THIS
+    void DrawItemManual(CDC* pDC, int nIndex, CRect rect);
+
+
+
+    virtual void AdjustRect(BOOL bLarger, LPRECT lpRect);
+
 };

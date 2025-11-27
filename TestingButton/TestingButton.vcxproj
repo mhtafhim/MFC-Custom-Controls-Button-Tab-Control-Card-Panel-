@@ -185,6 +185,7 @@
   <ItemGroup>
     <ClInclude Include="CardPanel.h" />
     <ClInclude Include="CardPanelWithPictureControl.h" />
+    <ClInclude Include="ColorButton.h" />
     <ClInclude Include="FlatTabCtrl.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="IconButton.h" />
@@ -200,6 +201,7 @@
   <ItemGroup>
     <ClCompile Include="CardPanel.cpp" />
     <ClCompile Include="CardPanelWithPictureControl.cpp" />
+    <ClCompile Include="ColorButton.cpp" />
     <ClCompile Include="FlatTabCtrl.cpp" />
     <ClCompile Include="IconButton.cpp" />
     <ClCompile Include="ModernTabCtrl.cpp" />
@@ -221,6 +223,21 @@
     <None Include="res\TestingButton.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="blue_icon\down.ico" />
+    <Image Include="blue_icon\left.ico" />
+    <Image Include="blue_icon\right.ico" />
+    <Image Include="blue_icon\up.ico" />
+    <Image Include="icon\bottom left.ico" />
+    <Image Include="icon\bottom right.ico" />
+    <Image Include="icon\down.ico" />
+    <Image Include="icon\left (1).ico" />
+    <Image Include="icon\left.ico" />
+    <Image Include="icon\right (1).ico" />
+    <Image Include="icon\right.ico" />
+    <Image Include="icon\top left.ico" />
+    <Image Include="icon\top right.ico" />
+    <Image Include="icon\up.ico" />
+    <Image Include="res\icon1.ico" />
     <Image Include="res\TestingButton.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

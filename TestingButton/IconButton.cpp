@@ -12,6 +12,7 @@ CIconButton::CIconButton()
     m_bDrawFocus = FALSE;
 
 
+
 }
 
 CIconButton::~CIconButton()
