@@ -73,6 +73,9 @@ void CTestingButtonDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_BOTTOM_LEFT, bottomLeftButton);
 	DDX_Control(pDX, IDC_BUTTON_DOWN, downButton);
 	DDX_Control(pDX, IDC_BUTTON_BOTTOM_RIGHT, bottomRightButton);
+	DDX_Control(pDX, IDC_BUTTON_TEST2, test_button_2);
+	DDX_Control(pDX, IDC_LIGHT_TOWER, m_ctrLightTower);
+	DDX_Control(pDX, IDC_SIGNALTOWER, signalTower);
 }
 
 BEGIN_MESSAGE_MAP(CTestingButtonDlg, CDialogEx)
@@ -83,6 +86,15 @@ BEGIN_MESSAGE_MAP(CTestingButtonDlg, CDialogEx)
 	ON_STN_CLICKED(IDC_PANEL_VIEW, &CTestingButtonDlg::OnStnClickedPanelView)
 	ON_BN_CLICKED(IDC_BUTTON3, &CTestingButtonDlg::OnBnClickedButton3)
 	ON_BN_CLICKED(IDC_BUTTON_TEST, &CTestingButtonDlg::OnBnClickedButtonTest)
+
+	ON_WM_TIMER()
+
+
+	ON_BN_CLICKED(IDC_BUTTON_BOTTOM_LEFT, &CTestingButtonDlg::OnBnClickedButtonBottomLeft)
+	ON_BN_CLICKED(IDC_BUTTON_DOWN, &CTestingButtonDlg::OnBnClickedButtonDown)
+	ON_BN_CLICKED(IDC_BUTTON_BOTTOM_RIGHT, &CTestingButtonDlg::OnBnClickedButtonBottomRight)
+	ON_BN_CLICKED(IDC_BUTTON5, &CTestingButtonDlg::OnBnClickedButton5)
+	ON_BN_CLICKED(IDC_BUTTON_RIGHT, &CTestingButtonDlg::OnBnClickedButtonRight)
 END_MESSAGE_MAP()
 
 
@@ -139,6 +151,7 @@ BOOL CTestingButtonDlg::OnInitDialog()
 
 	//tabCtrl.InsertTab(pDummy1, _T("Tab 1"));
 
+	
 
 
 
@@ -146,7 +159,7 @@ BOOL CTestingButtonDlg::OnInitDialog()
 
 	//tabCtrl.
 
-	m_brushBack.CreateSolidBrush(RGB(244, 247, 249)); //235, 236, 237
+	m_brushBack.CreateSolidBrush(RGB(230, 255, 255)); //235, 236, 237
 
 
 	setButtonIcon();
@@ -154,6 +167,20 @@ BOOL CTestingButtonDlg::OnInitDialog()
 
 	test_button.SetColor(RGB(34, 139, 34), RGB(50, 205, 50), RGB(255, 255, 255));
 	test_button.SetTextProperties(14, true, _T("Arial")); 
+
+
+	test_button_2.SetIconByID(IDI_ICON1);
+
+
+
+	UpdateTimeLabel();       // Show time immediately
+	SetTimer(1, 1000, NULL);
+ 
+
+
+
+
+
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -224,6 +251,29 @@ void CTestingButtonDlg::PopulateList()
 	}
 }
 
+
+
+void CTestingButtonDlg::UpdateTimeLabel()
+{
+	CTime currentTime = CTime::GetCurrentTime();
+	CString strTime = currentTime.Format(_T(" %m/%d/%Y \n %I:%M:%S %p"));
+
+	// Ensure the ID here matches your Resource ID exactly
+	if (GetDlgItem(IDC_DATE_TIME) != NULL)
+	{
+		SetDlgItemText(IDC_DATE_TIME, strTime);
+	}
+}
+
+
+void CTestingButtonDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	if (nIDEvent == 1)
+	{
+		UpdateTimeLabel();
+	}
+	CDialogEx::OnTimer(nIDEvent);
+}
 
 
 
@@ -303,11 +353,57 @@ void CTestingButtonDlg::OnStnClickedPanelView()
 
 void CTestingButtonDlg::OnBnClickedButton3()
 {
-	AfxMessageBox(_T("Button 3 clicked"));
+	signalTower.SetLightState(CSignalTower::ORANGE, true);
+
+	//AfxMessageBox(_T("Button 3 clicked"));
+	m_ctrLightTower.SetMode(TOWER_AMBER);
 	// TODO: Add your control notification handler code here
 }
 
 void CTestingButtonDlg::OnBnClickedButtonTest()
 {
+	// TODO: Add your control notification handler code here
+}
+
+void CTestingButtonDlg::OnBnClickedButtonBottomLeft()
+{
+	signalTower.SetLightState(CSignalTower::RED, true);
+
+
+	m_ctrLightTower.SetMode(TOWER_RED);
+
+	// TODO: Add your control notification handler code here
+}
+
+void CTestingButtonDlg::OnBnClickedButtonDown()
+{
+	signalTower.SetLightState(CSignalTower::BLUE, true);
+
+	m_ctrLightTower.SetMode(TOWER_BLUE);
+
+	// TODO: Add your control notification handler code here
+}
+
+void CTestingButtonDlg::OnBnClickedButtonBottomRight()
+{
+	
+	m_ctrLightTower.SetMode(TOWER_AMBER);
+	// TODO: Add your control notification handler code here
+}
+
+void CTestingButtonDlg::OnBnClickedButton5()
+{
+
+
+	// TODO: Add your control notification handler code here
+	m_ctrLightTower.SetMode(TOWER_OFF);
+}
+
+void CTestingButtonDlg::OnBnClickedButtonRight()
+{
+	signalTower.SetLightState(CSignalTower::GREEN, true);
+
+	m_ctrLightTower.SetMode(TOWER_GREEN);
+
 	// TODO: Add your control notification handler code here
 }

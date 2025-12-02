@@ -183,27 +183,32 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BottomTabCtrl.h" />
     <ClInclude Include="CardPanel.h" />
     <ClInclude Include="CardPanelWithPictureControl.h" />
     <ClInclude Include="ColorButton.h" />
     <ClInclude Include="FlatTabCtrl.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="IconButton.h" />
+    <ClInclude Include="LightTower.h" />
     <ClInclude Include="ModernTabCtrl.h" />
     <ClInclude Include="MyHeaderCtrl.h" />
     <ClInclude Include="MyListCtrl.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SignalTower.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TestingButton.h" />
     <ClInclude Include="TestingButtonDlg.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BottomTabCtrl.cpp" />
     <ClCompile Include="CardPanel.cpp" />
     <ClCompile Include="CardPanelWithPictureControl.cpp" />
     <ClCompile Include="ColorButton.cpp" />
     <ClCompile Include="FlatTabCtrl.cpp" />
     <ClCompile Include="IconButton.cpp" />
+    <ClCompile Include="LightTower.cpp" />
     <ClCompile Include="ModernTabCtrl.cpp" />
     <ClCompile Include="MyHeaderCtrl.cpp" />
     <ClCompile Include="MyListCtrl.cpp" />
@@ -213,6 +218,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SignalTower.cpp" />
     <ClCompile Include="TestingButton.cpp" />
     <ClCompile Include="TestingButtonDlg.cpp" />
   </ItemGroup>

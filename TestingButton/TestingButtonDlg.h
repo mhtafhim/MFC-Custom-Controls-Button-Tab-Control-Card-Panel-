@@ -9,6 +9,10 @@
 #include "FlatTabCtrl.h"
 #include "ModernTabCtrl.h"
 #include "ColorButton.h"
+#include "LightTower.h"
+#include "BottomTabCtrl.h"
+#include "SignalTower.h"
+
 
 // CTestingButtonDlg dialog
 class CTestingButtonDlg : public CDialogEx
@@ -34,6 +38,8 @@ protected:
 	virtual BOOL OnInitDialog();
 	void setButtonIcon();
 	void PopulateList();
+	void UpdateTimeLabel();
+	void OnTimer(UINT_PTR nIDEvent);
 	HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
@@ -44,7 +50,7 @@ public:
 
 	CMyListCtrl tableCtrl;
 
-	CModernTabCtrl tabCtrl;
+	CBottomTabCtrl tabCtrl;
 
 
 	CBrush m_brushBack;
@@ -64,4 +70,13 @@ public:
 	CIconButton downButton;
 	CIconButton bottomRightButton;
 	afx_msg void OnBnClickedButtonTest();
+	CIconButton test_button_2;
+
+	CLightTower m_ctrLightTower;
+	afx_msg void OnBnClickedButtonBottomLeft();
+	afx_msg void OnBnClickedButtonDown();
+	afx_msg void OnBnClickedButtonBottomRight();
+	afx_msg void OnBnClickedButton5();
+	afx_msg void OnBnClickedButtonRight();
+	CSignalTower signalTower;
 };
