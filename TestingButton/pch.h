@@ -11,3 +11,8 @@
 #include "framework.h"
 
 #endif //PCH_H
+
+
+#include <gdiplus.h>
+using namespace Gdiplus;
+#pragma comment (lib,"Gdiplus.lib")

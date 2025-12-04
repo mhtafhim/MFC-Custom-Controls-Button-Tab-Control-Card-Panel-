@@ -76,6 +76,12 @@ void CTestingButtonDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_TEST2, test_button_2);
 	DDX_Control(pDX, IDC_LIGHT_TOWER, m_ctrLightTower);
 	DDX_Control(pDX, IDC_SIGNALTOWER, signalTower);
+	DDX_Control(pDX, IDC_DEMO_TEXT, demoText);
+	//DDX_Control(pDX, IDC_LENS_OBJECTIVE, m_lensCtrl);
+	DDX_Control(pDX, IDC_LENS_CTRL, m_lensCtrl);
+	DDX_Control(pDX, IDC_SLIDER1, m_modernCtrl);
+	DDX_Control(pDX, IDC_BUTTON_TEST3, m_gradientButton);
+	DDX_Control(pDX, IDC_RADIO1, m_radioButton);
 }
 
 BEGIN_MESSAGE_MAP(CTestingButtonDlg, CDialogEx)
@@ -84,17 +90,32 @@ BEGIN_MESSAGE_MAP(CTestingButtonDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_WM_CTLCOLOR()
 	ON_STN_CLICKED(IDC_PANEL_VIEW, &CTestingButtonDlg::OnStnClickedPanelView)
-	ON_BN_CLICKED(IDC_BUTTON3, &CTestingButtonDlg::OnBnClickedButton3)
+	//ON_BN_CLICKED(IDC_BUTTON3, &CTestingButtonDlg::OnBnClickedButton3)
 	ON_BN_CLICKED(IDC_BUTTON_TEST, &CTestingButtonDlg::OnBnClickedButtonTest)
 
 	ON_WM_TIMER()
 
+	ON_STN_CLICKED(IDC_LENS_CTRL, &CTestingButtonDlg::OnLensSelectionChanged)
 
-	ON_BN_CLICKED(IDC_BUTTON_BOTTOM_LEFT, &CTestingButtonDlg::OnBnClickedButtonBottomLeft)
-	ON_BN_CLICKED(IDC_BUTTON_DOWN, &CTestingButtonDlg::OnBnClickedButtonDown)
-	ON_BN_CLICKED(IDC_BUTTON_BOTTOM_RIGHT, &CTestingButtonDlg::OnBnClickedButtonBottomRight)
-	ON_BN_CLICKED(IDC_BUTTON5, &CTestingButtonDlg::OnBnClickedButton5)
-	ON_BN_CLICKED(IDC_BUTTON_RIGHT, &CTestingButtonDlg::OnBnClickedButtonRight)
+
+
+	//ON_BN_CLICKED(IDC_BUTTON_BOTTOM_LEFT, &CTestingButtonDlg::OnBnClickedButtonBottomLeft)
+	//ON_BN_CLICKED(IDC_BUTTON_DOWN, &CTestingButtonDlg::OnBnClickedButtonDown)
+	//ON_BN_CLICKED(IDC_BUTTON_BOTTOM_RIGHT, &CTestingButtonDlg::OnBnClickedButtonBottomRight)
+	//ON_BN_CLICKED(IDC_BUTTON5, &CTestingButtonDlg::OnBnClickedButton5)
+	//ON_BN_CLICKED(IDC_BUTTON_RIGHT, &CTestingButtonDlg::OnBnClickedButtonRight)
+
+	// Map your specific IDs to the single logic function
+	ON_COMMAND_EX(IDC_BUTTON_TOP_LEFT, OnToolButtonClicked)
+	ON_COMMAND_EX(IDC_BUTTON_UP, OnToolButtonClicked)
+	ON_COMMAND_EX(IDC_BUTTON_TOP_RIGHT, OnToolButtonClicked)
+	ON_COMMAND_EX(IDC_BUTTON_LEFT, OnToolButtonClicked)
+	ON_COMMAND_EX(IDC_BUTTON_RIGHT, OnToolButtonClicked)
+	ON_COMMAND_EX(IDC_BUTTON_BOTTOM_LEFT, OnToolButtonClicked)
+	ON_COMMAND_EX(IDC_BUTTON_DOWN, OnToolButtonClicked)
+	ON_COMMAND_EX(IDC_BUTTON_BOTTOM_RIGHT, OnToolButtonClicked)
+
+
 END_MESSAGE_MAP()
 
 
@@ -173,12 +194,25 @@ BOOL CTestingButtonDlg::OnInitDialog()
 
 
 
+
+
+	demoText.SetFontOptions(10,false);
+
+
+	m_lensCtrl.AddLens(_T("4x\nMinor"));
+	m_lensCtrl.AddLens(_T("10x"));
+	m_lensCtrl.AddLens(_T("20x"));
+	m_lensCtrl.AddLens(_T("40x"));
+	m_lensCtrl.AddLens(_T("100x"));
+
+
+	m_gradientButton.SetIconByID(IDI_ICON9, 30);
+
+
+
 	UpdateTimeLabel();       // Show time immediately
 	SetTimer(1, 1000, NULL);
  
-
-
-
 
 
 
@@ -377,6 +411,8 @@ void CTestingButtonDlg::OnBnClickedButtonBottomLeft()
 
 void CTestingButtonDlg::OnBnClickedButtonDown()
 {
+
+	//downButton.SetBackgroundColor(RGB(0, 0, 0));
 	signalTower.SetLightState(CSignalTower::BLUE, true);
 
 	m_ctrLightTower.SetMode(TOWER_BLUE);
@@ -401,9 +437,115 @@ void CTestingButtonDlg::OnBnClickedButton5()
 
 void CTestingButtonDlg::OnBnClickedButtonRight()
 {
+
+
 	signalTower.SetLightState(CSignalTower::GREEN, true);
 
 	m_ctrLightTower.SetMode(TOWER_GREEN);
 
 	// TODO: Add your control notification handler code here
+}
+
+
+
+void CTestingButtonDlg::OnLensSelectionChanged()
+{
+	// 1. Ask the control which lens is currently selected
+	int nIndex = m_lensCtrl.GetSelectedIndex();
+
+	// 2. Define variables to store settings based on the lens
+	double dZoom = 1.0;
+	CString strName;
+
+	// 3. Logic based on index (0 is the first lens, 1 is the second, etc.)
+	switch (nIndex)
+	{
+	case 0: // 4x
+		dZoom = 4.0;
+		strName = _T("Scanning (4x)");
+		// Example: m_Camera.SetZoom(4.0);
+		break;
+
+	case 1: // 10x
+		dZoom = 10.0;
+		strName = _T("Low Power (10x)");
+		break;
+
+	case 2: // 20x
+		dZoom = 20.0;
+		strName = _T("Medium Power (20x)");
+		break;
+
+	case 3: // 40x
+		dZoom = 40.0;
+		strName = _T("High Dry (40x)");
+		break;
+
+	case 4: // 100x
+		dZoom = 100.0;
+		strName = _T("Oil Immersion (100x)");
+		break;
+
+	default:
+		return;
+	}
+
+	// 4. Test it: Update the Window Title or show a message
+	CString strOutput;
+	strOutput.Format(_T("Lens Changed: %s - Zoom Factor: %.1f"), strName, dZoom);
+
+	// Update the Dialog Title Bar
+	//SetWindowText(strOutput);
+	AfxMessageBox(strOutput);
+
+	// Or print to Visual Studio Output window
+	TRACE(_T("%s\n"), strOutput);
+}
+
+// Adjust these RGB values to match your UI design
+const COLORREF CLR_NORMAL_BACK = RGB(240, 240, 240); // Standard Grey/White
+const COLORREF CLR_NORMAL_HOVER = RGB(220, 220, 220); // Slightly darker when hovering
+const COLORREF CLR_SELECTED = RGB(173, 216, 230); // Light Blue for Active Tool
+
+BOOL CTestingButtonDlg::OnToolButtonClicked(UINT nID)
+{
+	// 1. NON-CLICKABLE LOGIC:
+	// If clicking the button that is ALREADY selected, ignore it.
+	if (nID == m_nSelectedToolID)
+		return TRUE;
+
+	// 2. RESET THE OLD BUTTON (Deselect)
+	// We cast GetDlgItem to your custom class to access your custom functions
+	if (m_nSelectedToolID != 0)
+	{
+		CIconButton* pOldBtn = (CIconButton*)GetDlgItem(m_nSelectedToolID);
+		if (pOldBtn)
+		{
+			// Restore normal background
+			pOldBtn->SetBackgroundColor(CLR_NORMAL_BACK);
+			// Restore normal hover effect
+			pOldBtn->SetHoverColor(CLR_NORMAL_HOVER);
+		}
+	}
+
+	// 3. SETUP THE NEW BUTTON (Select)
+	CIconButton* pNewBtn = (CIconButton*)GetDlgItem(nID);
+	if (pNewBtn)
+	{
+		// Set the "Selected" background
+		pNewBtn->SetBackgroundColor(CLR_SELECTED);
+
+		// DISABLE HOVER:
+		// Set hover color same as background so it looks like hover is disabled
+		pNewBtn->SetHoverColor(CLR_SELECTED);
+		AfxMessageBox(_T("Tool Selected"));
+	}
+
+	// 4. Update the tracking variable
+	m_nSelectedToolID = nID;
+
+	// 5. Handle Tool Logic
+	// switch(nID) { ... }
+
+	return TRUE; // Stop further processing
 }

@@ -187,16 +187,23 @@
     <ClInclude Include="CardPanel.h" />
     <ClInclude Include="CardPanelWithPictureControl.h" />
     <ClInclude Include="ColorButton.h" />
+    <ClInclude Include="ColorSlider.h" />
+    <ClInclude Include="ColorSliderCtrl.h" />
+    <ClInclude Include="CustomRadioButton.h" />
     <ClInclude Include="FlatTabCtrl.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="GradientButton.h" />
     <ClInclude Include="IconButton.h" />
     <ClInclude Include="LightTower.h" />
+    <ClInclude Include="ModernSlider.h" />
     <ClInclude Include="ModernTabCtrl.h" />
     <ClInclude Include="MyHeaderCtrl.h" />
     <ClInclude Include="MyListCtrl.h" />
+    <ClInclude Include="ObjectiveLensCtrl.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SignalTower.h" />
+    <ClInclude Include="StyleStatic.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TestingButton.h" />
     <ClInclude Include="TestingButtonDlg.h" />
@@ -206,12 +213,18 @@
     <ClCompile Include="CardPanel.cpp" />
     <ClCompile Include="CardPanelWithPictureControl.cpp" />
     <ClCompile Include="ColorButton.cpp" />
+    <ClCompile Include="ColorSlider.cpp" />
+    <ClCompile Include="ColorSliderCtrl.cpp" />
+    <ClCompile Include="CustomRadioButton.cpp" />
     <ClCompile Include="FlatTabCtrl.cpp" />
+    <ClCompile Include="GradientButton.cpp" />
     <ClCompile Include="IconButton.cpp" />
     <ClCompile Include="LightTower.cpp" />
+    <ClCompile Include="ModernSlider.cpp" />
     <ClCompile Include="ModernTabCtrl.cpp" />
     <ClCompile Include="MyHeaderCtrl.cpp" />
     <ClCompile Include="MyListCtrl.cpp" />
+    <ClCompile Include="ObjectiveLensCtrl.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -219,6 +232,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SignalTower.cpp" />
+    <ClCompile Include="StyleStatic.cpp" />
     <ClCompile Include="TestingButton.cpp" />
     <ClCompile Include="TestingButtonDlg.cpp" />
   </ItemGroup>

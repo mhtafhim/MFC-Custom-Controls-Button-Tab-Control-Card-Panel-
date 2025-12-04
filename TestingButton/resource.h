@@ -51,6 +51,9 @@
 #define IDC_DATE_TIME                   1018
 #define IDC_LIGHT_TOWER                 1019
 #define IDC_SIGNALTOWER                 1020
+#define IDC_DEMO_TEXT                   1021
+#define IDC_LENS_CTRL                   1024
+#define IDC_RADIO1                      1025
 
 // Next default values for new objects
 // 
@@ -58,7 +61,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        151
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1021
+#define _APS_NEXT_CONTROL_VALUE         1026
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

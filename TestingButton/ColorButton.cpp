@@ -9,14 +9,19 @@ CColorButton::CColorButton()
     m_hoverColor = RGB(220, 220, 220);
     m_textColor = RGB(0, 0, 0);
 
-    m_bHovering = false;
-    m_bTracking = false;
+    // CMFCButton Settings
+    m_bTransparent = FALSE;      // We want to draw the background
+    m_bDrawFocus = FALSE;        // Optional: Hide the dotted focus rectangle
+    m_nFlatStyle = CMFCButton::BUTTONSTYLE_NOBORDERS; // We draw our own borders
 }
 
 CColorButton::~CColorButton()
 {
     m_font.DeleteObject();
 }
+
+
+
 
 // Helper to set colors and force redraw
 void CColorButton::SetColor(COLORREF bg, COLORREF hover, COLORREF text)
@@ -28,11 +33,15 @@ void CColorButton::SetColor(COLORREF bg, COLORREF hover, COLORREF text)
     if (GetSafeHwnd()) Invalidate();
 }
 
+
+
+
 // Helper to create the custom font
 void CColorButton::SetTextProperties(int fontSize, bool isBold, CString fontName)
 {
     m_font.DeleteObject();
 
+    // We need a temporary DC to calculate font height
     CClientDC dc(this);
 
     LOGFONT lf;
@@ -45,64 +54,37 @@ void CColorButton::SetTextProperties(int fontSize, bool isBold, CString fontName
 
     m_font.CreateFontIndirect(&lf);
 
+    // Update the button font
+    SetFont(&m_font);
+
     if (GetSafeHwnd()) Invalidate();
 }
 
-BEGIN_MESSAGE_MAP(CColorButton, CButton)
-    ON_WM_MOUSEMOVE()
-    ON_WM_MOUSELEAVE()
+BEGIN_MESSAGE_MAP(CColorButton, CMFCButton)
+    // No manual mouse handlers needed; CMFCButton handles tracking internally
 END_MESSAGE_MAP()
 
-// 1. Detect Mouse Entering
-void CColorButton::OnMouseMove(UINT nFlags, CPoint point)
+
+
+// The Main Drawing Logic
+// CMFCButton uses OnDraw instead of DrawItem for easier customization
+void CColorButton::OnDraw(CDC* pDC, const CRect& rect, UINT uiState)
 {
-    if (!m_bTracking)
-    {
-        TRACKMOUSEEVENT tme;
-        tme.cbSize = sizeof(tme);
-        tme.hwndTrack = m_hWnd;
-        tme.dwFlags = TME_LEAVE;
-
-        if (_TrackMouseEvent(&tme))
-        {
-            m_bTracking = true;
-            m_bHovering = true;
-            Invalidate(); // Redraw for hover effect
-        }
-    }
-    CButton::OnMouseMove(nFlags, point);
-}
-
-// 2. Detect Mouse Leaving
-void CColorButton::OnMouseLeave()
-{
-    m_bTracking = false;
-    m_bHovering = false;
-    Invalidate(); // Redraw to remove hover effect
-
-    CButton::OnMouseLeave();
-}
-
-// 3. The Main Drawing Logic
-void CColorButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
-{
-    CDC dc;
-    dc.Attach(lpDrawItemStruct->hDC);
-
-    CRect rect = lpDrawItemStruct->rcItem;
-    UINT state = lpDrawItemStruct->itemState;
+    // Copy rect to modifiable variable
+    CRect drawRect = rect;
 
     // --- A. Determine Background Color ---
     COLORREF currentBg = m_bgColor;
 
-    if (state & ODS_SELECTED) // Button Pressed
+    // CMFCButton provides easy state checkers
+    if (IsPressed())
     {
         // Darken the normal color slightly
         currentBg = RGB(GetRValue(m_bgColor) * 0.8,
             GetGValue(m_bgColor) * 0.8,
             GetBValue(m_bgColor) * 0.8);
     }
-    else if (m_bHovering) // Mouse Hover
+    else if (IsHighlighted()) // Replaces m_bHovering
     {
         currentBg = m_hoverColor;
     }
@@ -111,37 +93,43 @@ void CColorButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
     CPen pen(PS_SOLID, 1, currentBg);
     CBrush brush(currentBg);
 
-    CBrush* pOldBrush = dc.SelectObject(&brush);
-    CPen* pOldPen = dc.SelectObject(&pen);
+    CBrush* pOldBrush = pDC->SelectObject(&brush);
+    CPen* pOldPen = pDC->SelectObject(&pen);
 
     // (15,15) is the roundness of the corners
-    dc.RoundRect(rect, CPoint(15, 15));
+    pDC->RoundRect(drawRect, CPoint(15, 15));
 
     // --- C. Draw Text ---
     CString strText;
     GetWindowText(strText);
 
-    dc.SetTextColor(m_textColor);
-    dc.SetBkMode(TRANSPARENT);
+    pDC->SetTextColor(m_textColor);
+    pDC->SetBkMode(TRANSPARENT);
 
     // Select Custom Font if set
     CFont* pOldFont = NULL;
     if (m_font.GetSafeHandle())
     {
-        pOldFont = dc.SelectObject(&m_font);
+        pOldFont = pDC->SelectObject(&m_font);
+    }
+    else
+    {
+        // Fallback to default button font if custom one isn't set
+        pOldFont = pDC->SelectObject(GetFont());
     }
 
     // If pressed, move text 1 pixel down/right for "click" feel
-    if (state & ODS_SELECTED)
+    if (IsPressed())
     {
-        rect.OffsetRect(1, 1);
+        drawRect.OffsetRect(1, 1);
     }
 
-    dc.DrawText(strText, rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    pDC->DrawText(strText, drawRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
     // --- D. Cleanup ---
-    if (pOldFont) dc.SelectObject(pOldFont);
-    dc.SelectObject(pOldBrush);
-    dc.SelectObject(pOldPen);
-    dc.Detach();
+    if (pOldFont) pDC->SelectObject(pOldFont);
+    pDC->SelectObject(pOldBrush);
+    pDC->SelectObject(pOldPen);
+
+    // Note: Do not call DC.Detach() here, CMFCButton passes a pointer to an existing DC
 }

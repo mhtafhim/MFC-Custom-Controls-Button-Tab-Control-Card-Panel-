@@ -12,7 +12,11 @@
 #include "LightTower.h"
 #include "BottomTabCtrl.h"
 #include "SignalTower.h"
-
+#include "StyleStatic.h"
+#include "ObjectiveLensCtrl.h"
+#include "ColorSliderCtrl.h"
+#include "GradientButton.h"
+#include "CustomRadioButton.h"
 
 // CTestingButtonDlg dialog
 class CTestingButtonDlg : public CDialogEx
@@ -78,5 +82,22 @@ public:
 	afx_msg void OnBnClickedButtonBottomRight();
 	afx_msg void OnBnClickedButton5();
 	afx_msg void OnBnClickedButtonRight();
+	afx_msg void OnLensSelectionChanged();
+
+	BOOL OnToolButtonClicked(UINT nID);
+
+
 	CSignalTower signalTower;
+	CStyleStatic demoText;
+//	CObjectiveLensCtrl m_lensCtrl;
+	CObjectiveLensCtrl m_lensCtrl;
+	CColorSliderCtrl m_modernCtrl;
+	CGradientButton m_gradientButton;
+	CCustomRadioButton m_radioButton;
+
+
+
+private: 
+	UINT m_nSelectedToolID; // Holds the ID of the currently active button
+
 };

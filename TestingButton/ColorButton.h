@@ -1,7 +1,8 @@
 #pragma once
 #include <afxwin.h>
+#include <afxbutton.h> // Required for CMFCButton
 
-class CColorButton : public CButton
+class CColorButton : public CMFCButton
 {
 public:
     CColorButton();
@@ -20,16 +21,8 @@ protected:
     COLORREF m_textColor;
     CFont    m_font;
 
-    // State tracking
-    bool m_bHovering;
-    bool m_bTracking;
-
-    // Overrides
-    virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
-
-    // Message Handlers
-    afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-    afx_msg void OnMouseLeave();
+    // CMFCButton specific override for drawing
+    virtual void OnDraw(CDC* pDC, const CRect& rect, UINT uiState);
 
     DECLARE_MESSAGE_MAP()
 };
