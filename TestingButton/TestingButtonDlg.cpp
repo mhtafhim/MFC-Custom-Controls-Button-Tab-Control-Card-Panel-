@@ -160,11 +160,34 @@ BOOL CTestingButtonDlg::OnInitDialog()
 	//test_button.EnableWindowsTheming(TRUE);
 
 
+
+
+
 	tabCtrl.InsertItem(0, _T("Operation"));
-
 	tabCtrl.InsertItem(1, _T("Analysis"));
-
 	tabCtrl.InsertItem(2, _T("Recipe"));
+
+
+
+
+
+	tabCtrl.ModifyStyle(0, TCS_FIXEDWIDTH);
+	// 2. Get the full width of the Tab Control currently on screen
+	CRect rect;
+	tabCtrl.GetClientRect(&rect);
+	// 3. Calculate width per tab
+	// Logic: (Total Width - 4 pixels padding) / Number of Tabs
+	// We subtract 4 pixels to prevent Windows from showing horizontal scroll arrows
+	int nTabCount = tabCtrl.GetItemCount();
+	int nTabWidth = (rect.Width() - 4) / nTabCount;
+	// 4. Define the height (e.g., 25 or 30 pixels)
+	int nTabHeight = 40;
+	// 5. Apply the new size
+	tabCtrl.SetItemSize(CSize(nTabWidth, nTabHeight));
+
+
+
+
 
 
 	//CStatic* pDummy1 = new CStatic();

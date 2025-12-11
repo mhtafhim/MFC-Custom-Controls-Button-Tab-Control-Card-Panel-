@@ -4,6 +4,9 @@
 
 BEGIN_MESSAGE_MAP(CMyListCtrl, CListCtrl)
     ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, &CMyListCtrl::OnCustomDraw)
+    ON_WM_SIZE()
+    ON_WM_NCPAINT()
+
 END_MESSAGE_MAP()
 
 void CMyListCtrl::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
@@ -65,6 +68,11 @@ void CMyListCtrl::PreSubclassWindow()
 {
     CListCtrl::PreSubclassWindow();
 
+
+    // 1. Remove standard square borders (ClientEdge and Border)
+    ModifyStyle(WS_BORDER, 0);
+    ModifyStyleEx(WS_EX_CLIENTEDGE | WS_EX_STATICEDGE, 0);
+
     // Get the existing header
     CHeaderCtrl* pHeader = GetHeaderCtrl();
 
@@ -78,3 +86,59 @@ void CMyListCtrl::PreSubclassWindow()
        // ::SetWindowTheme(m_HeaderCtrl.GetSafeHwnd(), L"", L"");
     }
 }
+
+
+void CMyListCtrl::OnSize(UINT nType, int cx, int cy)
+{
+    CListCtrl::OnSize(nType, cx, cy);
+
+    // Define the corner roundness (e.g., 16 pixels)
+    int nCornerRadius = 16;
+
+    CRect rect;
+    GetWindowRect(&rect);
+
+    // Create a Rounded Rectangular Region
+    // We start at (0,0) and go to (Width, Height)
+    CRgn rgn;
+    rgn.CreateRoundRectRgn(0, 0, rect.Width() + 1, rect.Height() + 1, nCornerRadius, nCornerRadius);
+
+    // Apply the Region to the Window
+    // The "TRUE" flag tells Windows to redraw immediately
+    SetWindowRgn(static_cast<HRGN>(rgn.GetSafeHandle()), TRUE);
+
+    // Note: SetWindowRgn takes ownership of the GDI handle, so we detach it 
+    // to prevent the C++ object from destroying it.
+    rgn.Detach();
+}
+
+
+void CMyListCtrl::OnNcPaint()
+{
+    // 1. Let the default paint happen (for scrollbars, etc.)
+    CListCtrl::OnNcPaint();
+
+    // 2. Draw our custom rounded border on top
+    CWindowDC dc(this); // Get DC for the whole window (including borders)
+
+    CRect rect;
+    GetWindowRect(&rect);
+
+    // Normalize rect to (0,0)
+    rect.OffsetRect(-rect.left, -rect.top);
+
+    // Define border color (e.g., Dark Gray like standard Windows)
+    CPen pen(PS_SOLID, 1, RGB(100, 100, 100));
+    CPen* pOldPen = dc.SelectObject(&pen);
+
+    // Use a NULL brush so we don't fill the inside, just the outline
+    dc.SelectStockObject(NULL_BRUSH);
+
+    // Draw the RoundRect border matching the region in OnSize
+    // Note: We subtract 1 from right/bottom to keep it inside the region
+    int nCornerRadius = 16;
+    dc.RoundRect(rect.left, rect.top, rect.right, rect.bottom, nCornerRadius, nCornerRadius);
+
+    dc.SelectObject(pOldPen);
+}
+

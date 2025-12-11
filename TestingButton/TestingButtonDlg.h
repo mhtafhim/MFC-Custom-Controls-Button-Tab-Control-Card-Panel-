@@ -54,7 +54,8 @@ public:
 
 	CMyListCtrl tableCtrl;
 
-	CBottomTabCtrl tabCtrl;
+
+	CModernTabCtrl tabCtrl;
 
 
 	CBrush m_brushBack;

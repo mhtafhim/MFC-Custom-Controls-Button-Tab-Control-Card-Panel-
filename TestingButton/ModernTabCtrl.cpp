@@ -29,6 +29,8 @@ END_MESSAGE_MAP()
 
 void CModernTabCtrl::PreSubclassWindow()
 {
+
+
     // Enable Owner Draw
     ModifyStyle(0, TCS_OWNERDRAWFIXED);
 
