@@ -8,6 +8,8 @@
 #include "TestingButtonDlg.h"
 #include "afxdialogex.h"
 
+
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -82,6 +84,7 @@ void CTestingButtonDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SLIDER1, m_modernCtrl);
 	DDX_Control(pDX, IDC_BUTTON_TEST3, m_gradientButton);
 	DDX_Control(pDX, IDC_RADIO1, m_radioButton);
+	DDX_Control(pDX, IDC_ROUND_STATIC, m_roundStatic);
 }
 
 BEGIN_MESSAGE_MAP(CTestingButtonDlg, CDialogEx)

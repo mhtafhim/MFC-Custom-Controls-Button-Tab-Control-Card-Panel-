@@ -87,6 +87,9 @@
     <ClInclude Include="CustomRadioButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RoundStatic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestingButton.cpp">
@@ -150,6 +153,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CustomRadioButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RoundStatic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

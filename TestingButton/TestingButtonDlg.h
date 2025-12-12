@@ -17,6 +17,7 @@
 #include "ColorSliderCtrl.h"
 #include "GradientButton.h"
 #include "CustomRadioButton.h"
+#include "RoundStatic.h"
 
 // CTestingButtonDlg dialog
 class CTestingButtonDlg : public CDialogEx
@@ -101,4 +102,6 @@ public:
 private: 
 	UINT m_nSelectedToolID; // Holds the ID of the currently active button
 
+public:
+	CRoundStatic m_roundStatic;
 };

@@ -202,6 +202,7 @@
     <ClInclude Include="ObjectiveLensCtrl.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="RoundStatic.h" />
     <ClInclude Include="SignalTower.h" />
     <ClInclude Include="StyleStatic.h" />
     <ClInclude Include="targetver.h" />
@@ -231,6 +232,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="RoundStatic.cpp" />
     <ClCompile Include="SignalTower.cpp" />
     <ClCompile Include="StyleStatic.cpp" />
     <ClCompile Include="TestingButton.cpp" />
