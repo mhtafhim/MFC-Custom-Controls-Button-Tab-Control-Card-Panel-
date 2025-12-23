@@ -25,6 +25,7 @@
 #define IDI_ICON7                       148
 #define IDI_ICON8                       149
 #define IDI_ICON9                       150
+#define IDD_DICEVIEW_DLG                151
 #define IDC_BUTTON1                     1000
 #define IDC_BUTTON_TEST                 1000
 #define IDC_LIST1                       1001
@@ -55,14 +56,16 @@
 #define IDC_LENS_CTRL                   1024
 #define IDC_RADIO1                      1025
 #define IDC_ROUND_STATIC                1026
+#define IDC_STATIC_DICEMAP              1027
+#define IDC_STATIC_DICE                 1028
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        151
+#define _APS_NEXT_RESOURCE_VALUE        154
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1027
+#define _APS_NEXT_CONTROL_VALUE         1029
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

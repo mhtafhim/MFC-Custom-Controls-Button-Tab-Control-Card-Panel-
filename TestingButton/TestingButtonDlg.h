@@ -18,6 +18,7 @@
 #include "GradientButton.h"
 #include "CustomRadioButton.h"
 #include "RoundStatic.h"
+#include "DiceMap.h"
 
 // CTestingButtonDlg dialog
 class CTestingButtonDlg : public CDialogEx
@@ -104,4 +105,6 @@ private:
 
 public:
 	CRoundStatic m_roundStatic;
+	CDiceMap m_diceMap;
+	afx_msg void OnBnClickedButtonTest2();
 };

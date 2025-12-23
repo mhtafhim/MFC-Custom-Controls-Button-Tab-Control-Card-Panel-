@@ -85,6 +85,7 @@ void CTestingButtonDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_TEST3, m_gradientButton);
 	DDX_Control(pDX, IDC_RADIO1, m_radioButton);
 	DDX_Control(pDX, IDC_ROUND_STATIC, m_roundStatic);
+	DDX_Control(pDX, IDC_STATIC_DICEMAP, m_diceMap);
 }
 
 BEGIN_MESSAGE_MAP(CTestingButtonDlg, CDialogEx)
@@ -119,6 +120,7 @@ BEGIN_MESSAGE_MAP(CTestingButtonDlg, CDialogEx)
 	ON_COMMAND_EX(IDC_BUTTON_BOTTOM_RIGHT, OnToolButtonClicked)
 
 
+	ON_BN_CLICKED(IDC_BUTTON_TEST2, &CTestingButtonDlg::OnBnClickedButtonTest2)
 END_MESSAGE_MAP()
 
 
@@ -198,7 +200,32 @@ BOOL CTestingButtonDlg::OnInitDialog()
 
 	//tabCtrl.InsertTab(pDummy1, _T("Tab 1"));
 
-	
+
+
+	// Initialize the visual settings
+	// Diameter: 300mm
+	// Die Size: 15mm x 15mm
+	// Gap: 1mm x 1mm (Street width)
+	//m_diceMap.SetWaferParams(300.0, 25.0, 25.0, 5.0, 5.0);
+
+
+
+	m_diceMap.SetWaferParams(500.0, 5.0, 5.0);
+
+	// 2. Set Reference Die Points (TL, BL, BR)
+	PointD pTL = { 10, 40 };
+	PointD pBL = { 10, 10 };
+	PointD pBR = { 50, 10 };
+
+	/*PointD pTL = { 0, 0 };
+	PointD pBL = { -10, 0 };
+	PointD pBR = { -10, 10 };*/
+
+	m_diceMap.SetReferenceDie(pTL, pBL, pBR);
+
+
+	m_diceMap.SetShowPartialDies(true);
+
 
 
 
@@ -574,4 +601,15 @@ BOOL CTestingButtonDlg::OnToolButtonClicked(UINT nID)
 	// switch(nID) { ... }
 
 	return TRUE; // Stop further processing
+}
+
+#include "DiceViewDlg.h"
+void CTestingButtonDlg::OnBnClickedButtonTest2()
+{
+
+	CDiceViewDlg dlg;
+
+	dlg.DoModal();
+
+	// TODO: Add your control notification handler code here
 }
