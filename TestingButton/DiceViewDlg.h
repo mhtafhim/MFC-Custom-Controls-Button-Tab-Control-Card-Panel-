@@ -25,5 +25,5 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	CDiceMap m_diceMap;
+	CDiceMap m_diceMap2;
 };

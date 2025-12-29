@@ -86,6 +86,7 @@ void CTestingButtonDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_RADIO1, m_radioButton);
 	DDX_Control(pDX, IDC_ROUND_STATIC, m_roundStatic);
 	DDX_Control(pDX, IDC_STATIC_DICEMAP, m_diceMap);
+	DDX_Control(pDX, IDC_MASK_CHECK, m_maskCheck);
 }
 
 BEGIN_MESSAGE_MAP(CTestingButtonDlg, CDialogEx)
@@ -121,6 +122,10 @@ BEGIN_MESSAGE_MAP(CTestingButtonDlg, CDialogEx)
 
 
 	ON_BN_CLICKED(IDC_BUTTON_TEST2, &CTestingButtonDlg::OnBnClickedButtonTest2)
+	ON_BN_CLICKED(IDC_MASK_CHECK, &CTestingButtonDlg::OnBnClickedMaskCheck)
+	ON_BN_CLICKED(IDC_BUTTON4, &CTestingButtonDlg::OnBnClickedButton4)
+
+
 END_MESSAGE_MAP()
 
 
@@ -207,19 +212,16 @@ BOOL CTestingButtonDlg::OnInitDialog()
 	// Die Size: 15mm x 15mm
 	// Gap: 1mm x 1mm (Street width)
 	//m_diceMap.SetWaferParams(300.0, 25.0, 25.0, 5.0, 5.0);
+	InitEditControls();
 
+	m_diceMap.SetWaferParams(m_dWaferDiameter, m_dGapX, m_dGapY);
 
+	//// 2. Set Reference Die Points (TL, BL, BR)
+	//PointD pTL = { 10, 40 }; 
+	//PointD pBL = { 10, 10 };
+	//PointD pBR = { 70, 10 };
 
-	m_diceMap.SetWaferParams(500.0, 5.0, 5.0);
-
-	// 2. Set Reference Die Points (TL, BL, BR)
-	PointD pTL = { 10, 40 };
-	PointD pBL = { 10, 10 };
-	PointD pBR = { 50, 10 };
-
-	/*PointD pTL = { 0, 0 };
-	PointD pBL = { -10, 0 };
-	PointD pBR = { -10, 10 };*/
+	
 
 	m_diceMap.SetReferenceDie(pTL, pBL, pBR);
 
@@ -227,6 +229,7 @@ BOOL CTestingButtonDlg::OnInitDialog()
 	m_diceMap.SetShowPartialDies(true);
 
 
+	//UpdateData(FALSE);
 
 
 	PopulateList();
@@ -612,4 +615,105 @@ void CTestingButtonDlg::OnBnClickedButtonTest2()
 	dlg.DoModal();
 
 	// TODO: Add your control notification handler code here
+}
+
+void CTestingButtonDlg::OnBnClickedMaskCheck()
+{
+	int state = m_maskCheck.GetCheck();
+
+	if (state == BST_CHECKED) {
+		m_diceMap.SetShowPartialDies(false);
+		// It is checked (1)
+	}
+	else if (state == BST_UNCHECKED) {
+		m_diceMap.SetShowPartialDies(true);
+		// It is unchecked (0)
+	}
+	else if (state == BST_INDETERMINATE) {
+		// Only used for 3-state checkboxes (2)
+	}
+	// TODO: Add your control notification handler code here
+}
+
+
+
+
+void CTestingButtonDlg::OnBnClickedButton4()
+{
+	// UpdateData(TRUE) reads from Screen to Variables
+	if (UpdateData(TRUE))
+	{
+		// Data is now successfully stored in m_dWaferDiameter, pTL.x, etc.
+		//AfxMessageBox(_T("Data Read Successfully"));
+
+		OnBnClickedReadData();
+		m_diceMap.SetWaferParams(m_dWaferDiameter, m_dGapX, m_dGapY);
+		m_diceMap.SetReferenceDie(pTL, pBL, pBR);
+	}
+	else
+	{
+		AfxMessageBox(_T("Invalid Data Entered"));
+	}
+
+
+	// TODO: Add your control notification handler code here
+}
+
+
+void CTestingButtonDlg::OnBnClickedReadData()
+{
+	// --- Read Single Variables ---
+	m_dWaferDiameter = GetDoubleFromEdit(IDC_EDIT7);
+	m_dGapX = GetDoubleFromEdit(IDC_EDIT8);
+	m_dGapY = GetDoubleFromEdit(IDC_EDIT9);
+
+	// --- Read PointD: Top Left ---
+	pTL.x = GetDoubleFromEdit(IDC_EDIT2);
+	pTL.y = GetDoubleFromEdit(IDC_EDIT1);
+
+	// --- Read PointD: Bottom Left ---
+	pBL.x = GetDoubleFromEdit(IDC_EDIT4);
+	pBL.y = GetDoubleFromEdit(IDC_EDIT3);
+
+	// --- Read PointD: Bottom Right ---
+	pBR.x = GetDoubleFromEdit(IDC_EDIT6);
+	pBR.y = GetDoubleFromEdit(IDC_EDIT5);
+}
+
+// specific helper to read a double from an ID
+double CTestingButtonDlg::GetDoubleFromEdit(int nID)
+{
+	CString strText;
+	GetDlgItemText(nID, strText);
+	return _ttof(strText); // _ttof converts string to double
+}
+
+
+void CTestingButtonDlg::SetEditVal(int nID, double val)
+{
+	CString str;
+	// Format to 3 decimal places (change .3 to whatever you need)
+	str.Format(_T("%.3f"), val);
+	SetDlgItemText(nID, str);
+}
+
+
+void CTestingButtonDlg::InitEditControls()
+{
+	// Set Single Variables
+	SetEditVal(IDC_EDIT7, m_dWaferDiameter);
+	SetEditVal(IDC_EDIT8, m_dGapX);
+	SetEditVal(IDC_EDIT9, m_dGapY);
+
+	// Set Point Top-Left
+	SetEditVal(IDC_EDIT2, pTL.x);
+	SetEditVal(IDC_EDIT1, pTL.y);
+
+	// Set Point Bottom-Left
+	SetEditVal(IDC_EDIT4, pBL.x);
+	SetEditVal(IDC_EDIT3, pBL.y);
+
+	// Set Point Bottom-Right
+	SetEditVal(IDC_EDIT6, pBR.x);
+	SetEditVal(IDC_EDIT5, pBR.y);
 }

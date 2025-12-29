@@ -100,6 +100,19 @@ public:
 
 
 
+
+
+	double m_dWaferDiameter=100;
+	double m_dGapX = 1.0;
+	double m_dGapY = 1.0;
+	/*PointD pTL = { 32.58,121.255 };
+	PointD pBL = { 32.24, 88.965 };
+	PointD pBR = { 56.629, 88.699 };*/
+	PointD pTL = { -12-4,-42 };
+	PointD pBL = { -12-4, -47 };
+	PointD pBR = { -7-4, -47 };
+
+
 private: 
 	UINT m_nSelectedToolID; // Holds the ID of the currently active button
 
@@ -107,4 +120,12 @@ public:
 	CRoundStatic m_roundStatic;
 	CDiceMap m_diceMap;
 	afx_msg void OnBnClickedButtonTest2();
+	CButton m_maskCheck;
+	afx_msg void OnBnClickedMaskCheck();
+	
+	afx_msg void OnBnClickedButton4();
+	void OnBnClickedReadData();
+	double GetDoubleFromEdit(int nID);
+	void SetEditVal(int nID, double val);
+	void InitEditControls();
 };

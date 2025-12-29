@@ -24,7 +24,7 @@ CDiceViewDlg::~CDiceViewDlg()
 void CDiceViewDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_STATIC_DICE, m_diceMap);
+	DDX_Control(pDX, IDC_STATIC_DICE, m_diceMap2);
 }
 
 
@@ -37,7 +37,7 @@ END_MESSAGE_MAP()
 
 BOOL CDiceViewDlg::OnInitDialog()
 {
-	m_diceMap.SetWaferParams(500.0, 5.0, 5.0);
+	m_diceMap2.SetWaferParams(500.0, 5.0, 5.0);
 
 	// 2. Set Reference Die Points (TL, BL, BR)
 	PointD pTL = { 10, 40 };
@@ -48,10 +48,10 @@ BOOL CDiceViewDlg::OnInitDialog()
 	//PointD pBL = { -10, 0 };
 	//PointD pBR = { -10, 10 };
 
-	m_diceMap.SetReferenceDie(pTL, pBL, pBR);
+	m_diceMap2.SetReferenceDie(pTL, pBL, pBR);
 
 
-	m_diceMap.SetShowPartialDies(true);
+	m_diceMap2.SetShowPartialDies(true);
 
 
 	return TRUE;
