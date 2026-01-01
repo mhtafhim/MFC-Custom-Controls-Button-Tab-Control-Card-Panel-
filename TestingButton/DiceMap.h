@@ -34,6 +34,23 @@ public:
     int GetSelectedCount();
     void ClearSelection();
 
+
+    // --- NEW MEMBERS FOR TOOLTIP ---
+    CToolTipCtrl m_ToolTip;
+    int m_iLastHoveredDieId; // Tracks which die we are currently over
+
+
+    // Override this to pass mouse messages to the tooltip
+    virtual BOOL PreTranslateMessage(MSG* pMsg);
+
+
+    // --- NEW MSG HANDLER ---
+    afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+    virtual void PreSubclassWindow(); // Used to initialize tooltip
+
+
+
+
 protected:
     double m_dWaferDiameter;
     double m_dGapX;

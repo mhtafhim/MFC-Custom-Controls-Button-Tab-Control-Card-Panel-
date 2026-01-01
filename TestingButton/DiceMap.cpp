@@ -6,14 +6,18 @@
 
 CDiceMap::CDiceMap()
 {
-    m_dWaferDiameter = 300.0;
+    /*m_dWaferDiameter = 300.0;
     m_dDieWidth = 10.0;
     m_dDieHeight = 10.0;
     m_dGapX = 0.0;
     m_dGapY = 0.0;
     m_dRotationAngleRad = 0;
     m_RefCenter = { 0, 0 };
-    m_bShowPartialDies = false;
+    m_bShowPartialDies = false;*/
+
+
+    m_iLastHoveredDieId = -1; // -1 means nothing selected
+
 }
 
 CDiceMap::~CDiceMap()
@@ -25,6 +29,7 @@ BEGIN_MESSAGE_MAP(CDiceMap, CStatic)
     ON_WM_SIZE()
     ON_WM_ERASEBKGND()
     ON_WM_LBUTTONUP() // Capture Mouse Click
+    ON_WM_MOUSEMOVE() // <--- ADD THIS
 END_MESSAGE_MAP()
 
 void CDiceMap::SetShowPartialDies(bool bShow)
@@ -54,7 +59,7 @@ void CDiceMap::SetReferenceDie(PointD pTL, PointD pBL, PointD pBR)
     m_dDieHeight = std::sqrt(dx_h * dx_h + dy_h * dy_h);
 
     // Angle
-    //m_dRotationAngleRad = std::atan2(dy_w, dx_w);
+    m_dRotationAngleRad = std::atan2(dy_w, dx_w);
 
     // Center of Ref Die
     m_RefCenter.x = (pTL.x + pBR.x) / 2.0;
@@ -71,6 +76,7 @@ void CDiceMap::RotatePoint(PointD& pt, double angleRad)
     pt.x = x_new;
     pt.y = y_new;
 }
+
 
 bool CDiceMap::CheckDieIntersection(PointD dieCenter, double w, double h, double angRad, double waferRad, bool& outIsPartial)
 {
@@ -109,6 +115,7 @@ bool CDiceMap::CheckDieIntersection(PointD dieCenter, double w, double h, double
     }
     return false;
 }
+
 
 void CDiceMap::RecalculateLayout()
 {
@@ -184,12 +191,16 @@ void CDiceMap::RecalculateLayout()
     }
 }
 
+
+
 CPoint CDiceMap::LogicalToDevice(PointD logicPt, int cx, int cy, double scale, int offsetX, int offsetY)
 {
     long sx = (long)(offsetX + (logicPt.x * scale));
     long sy = (long)(offsetY - (logicPt.y * scale));
     return CPoint(sx, sy);
 }
+
+
 
 // --- MOUSE CLICK HANDLER ---
 void CDiceMap::OnLButtonUp(UINT nFlags, CPoint point)
@@ -224,7 +235,7 @@ void CDiceMap::OnLButtonUp(UINT nFlags, CPoint point)
         if (rgn.PtInRegion(point))
         {
 			//AfxMessageBox(std::to_wstring(die.id).c_str()); // Show Die ID
-               CString str = std::to_wstring(die.corners[0].x).c_str();
+              /* CString str = std::to_wstring(die.corners[0].x).c_str();
                CString str2 = std::to_wstring(die.corners[0].y).c_str();
                CString str3 = std::to_wstring(die.corners[1].x).c_str();
                CString str4 = std::to_wstring(die.corners[1].y).c_str();
@@ -235,7 +246,7 @@ void CDiceMap::OnLButtonUp(UINT nFlags, CPoint point)
                CString msg;
                msg.Format(L"ID : %s \nC1: X=%s, Y=%s \n C2: X=%s, Y=%s \n C3: X=%s, Y=%s \n C4: X=%s, Y=%s", std::to_wstring(die.id).c_str(),
                    str, str2, str3, str4, str5, str6, str7, str8);
-               AfxMessageBox(msg);
+               AfxMessageBox(msg);*/
 
           //  AfxMessageBox(std::to_wstring(die.corners[0].y).c_str());
 
@@ -374,6 +385,7 @@ void CDiceMap::OnLButtonUp(UINT nFlags, CPoint point)
 //    dc.BitBlt(0, 0, cx, cy, &memDC, 0, 0, SRCCOPY);
 //    memDC.SelectObject(pOldBitmap);
 //}
+
 
 
 void CDiceMap::OnPaint()
@@ -522,12 +534,16 @@ void CDiceMap::OnPaint()
 }
 
 
+
 void CDiceMap::OnSize(UINT nType, int cx, int cy) {
     CStatic::OnSize(nType, cx, cy);
     Invalidate();
 }
 
+
 BOOL CDiceMap::OnEraseBkgnd(CDC* pDC) { return TRUE; }
+
+
 
 int CDiceMap::GetSelectedCount() {
     int count = 0;
@@ -535,7 +551,150 @@ int CDiceMap::GetSelectedCount() {
     return count;
 }
 
+
+
 void CDiceMap::ClearSelection() {
     for (auto& die : m_DieList) die.bSelected = false;
     Invalidate();
+}
+
+
+
+BOOL CDiceMap::PreTranslateMessage(MSG* pMsg)
+{
+    if (m_ToolTip.GetSafeHwnd())
+    {
+        m_ToolTip.RelayEvent(pMsg);
+    }
+    return CStatic::PreTranslateMessage(pMsg);
+}
+
+
+
+
+void CDiceMap::OnMouseMove(UINT nFlags, CPoint point)
+{
+    // 1. Get Client Geometry (Same as OnPaint)
+    CRect rectClient;
+    GetClientRect(&rectClient);
+    int cx = rectClient.Width();
+    int cy = rectClient.Height();
+    if (cx == 0) return;
+
+    double contentSize = m_dWaferDiameter * 1.05;
+    double scale = min((double)cx, (double)cy) / contentSize;
+    int centerX = cx / 2;
+    int centerY = cy / 2;
+    double rPx = (m_dWaferDiameter / 2.0) * scale;
+    double rPxSq = rPx * rPx;
+
+    // Optimization: If outside wafer circle, hide immediately
+    if (std::pow(point.x - centerX, 2) + std::pow(point.y - centerY, 2) > rPxSq)
+    {
+        if (m_iLastHoveredDieId != -1) {
+            m_ToolTip.Pop(); // Hide tooltip
+            m_iLastHoveredDieId = -1;
+        }
+        CStatic::OnMouseMove(nFlags, point);
+        return;
+    }
+
+    bool bFound = false;
+    int hoveredID = -1;
+    CString strInfo;
+
+    // 2. Iterate Dies
+    for (const auto& die : m_DieList)
+    {
+        // Convert logic coords to screen coords
+        CPoint pts[4];
+        for (int k = 0; k < 4; k++)
+            pts[k] = LogicalToDevice(die.corners[k], cx, cy, scale, centerX, centerY);
+
+        // Optimization: Bounding Box Check (Fast)
+        int minX = min(min(pts[0].x, pts[1].x), min(pts[2].x, pts[3].x));
+        int maxX = max(max(pts[0].x, pts[1].x), max(pts[2].x, pts[3].x));
+        int minY = min(min(pts[0].y, pts[1].y), min(pts[2].y, pts[3].y));
+        int maxY = max(max(pts[0].y, pts[1].y), max(pts[2].y, pts[3].y));
+
+        if (point.x < minX || point.x > maxX || point.y < minY || point.y > maxY)
+            continue;
+
+        // Precise Polygon Check (Slower, but accurate)
+        CRgn rgn;
+        rgn.CreatePolygonRgn(pts, 4, ALTERNATE);
+
+        if (rgn.PtInRegion(point))
+        {
+            bFound = true;
+            hoveredID = die.id;
+
+            // 3. Format ALL DieInfo data
+            strInfo.Format(
+                _T("ID: %d\n")
+                _T("Grid: Col %d, Row %d\n")
+                _T("State: %s\n")
+                _T("Selected: %s\n")
+                _T("----------------\n")
+                _T("TL: (%.2f, %.2f)\n")
+                _T("TR: (%.2f, %.2f)\n")
+                _T("BR: (%.2f, %.2f)\n")
+                _T("BL: (%.2f, %.2f)"),
+
+                die.id,
+                die.gridCol, die.gridRow,
+                die.bIsPartial ? _T("Partial") : _T("Full"),
+                die.bSelected ? _T("TRUE") : _T("FALSE"),
+                die.corners[0].x, die.corners[0].y,
+                die.corners[1].x, die.corners[1].y,
+                die.corners[2].x, die.corners[2].y,
+                die.corners[3].x, die.corners[3].y
+            );
+
+            break; // Stop at the first die found (topmost)
+        }
+    }
+
+    // 4. Update Tooltip ONLY if the die changed (prevents flicker)
+    if (hoveredID != m_iLastHoveredDieId)
+    {
+        m_iLastHoveredDieId = hoveredID;
+
+        if (bFound)
+        {
+            m_ToolTip.UpdateTipText(strInfo, this);
+            m_ToolTip.Activate(TRUE); // Ensure it's active
+        }
+        else
+        {
+            m_ToolTip.UpdateTipText(_T(""), this);
+            m_ToolTip.Activate(FALSE); // Hide it
+        }
+    }
+
+    CStatic::OnMouseMove(nFlags, point);
+}
+
+
+
+void CDiceMap::PreSubclassWindow()
+{
+    CStatic::PreSubclassWindow();
+
+    // Create the tooltip if it doesn't exist
+    if (m_ToolTip.GetSafeHwnd() == NULL)
+    {
+        // TTS_ALWAYSTIP: Show even if parent isn't active
+        // TTS_BALLOON: Optional, gives it a rounded balloon look
+        m_ToolTip.Create(this, TTS_ALWAYSTIP | TTS_NOPREFIX);
+
+        // IMPORTANT: Enable multiline support by setting a max width
+        m_ToolTip.SetMaxTipWidth(400);
+
+        // Add the control itself as the tool
+        m_ToolTip.AddTool(this, _T(""));
+
+        m_ToolTip.Activate(TRUE);
+        m_ToolTip.SetDelayTime(TTDT_AUTOPOP, 10000); // Keep open for 10 seconds
+    }
 }

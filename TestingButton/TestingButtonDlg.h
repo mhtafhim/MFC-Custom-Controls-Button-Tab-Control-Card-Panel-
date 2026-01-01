@@ -102,15 +102,19 @@ public:
 
 
 
-	double m_dWaferDiameter=100;
+	double m_dWaferDiameter=300;
 	double m_dGapX = 1.0;
 	double m_dGapY = 1.0;
-	/*PointD pTL = { 32.58,121.255 };
+	PointD pTL = { 32.58,121.255 };
 	PointD pBL = { 32.24, 88.965 };
-	PointD pBR = { 56.629, 88.699 };*/
-	PointD pTL = { -12-4,-42 };
-	PointD pBL = { -12-4, -47 };
-	PointD pBR = { -7-4, -47 };
+	PointD pBR = { 56.629, 88.699 };
+	//PointD pTL = { 0 , 0 };
+	//PointD pBL = { 0 , -5 };
+	//PointD pBR = {5 , -5 };
+
+	//PointD pTL = { -2 , 4 };
+	//PointD pBL = { -4 , 2 };
+	//PointD pBR = { -2 , 0 };
 
 
 private: 
