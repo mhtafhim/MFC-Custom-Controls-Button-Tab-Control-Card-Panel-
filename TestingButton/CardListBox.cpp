@@ -122,7 +122,8 @@ int CardListBox::AddString(LPCTSTR lpszItem)
     if (m_wndList.GetSafeHwnd() == NULL) CreateInnerList();
 
     int idx = m_wndList.AddString(lpszItem);
-
+	m_wndList.SetTopIndex(m_wndList.GetCount() - 1); // Auto-scroll to bottom
+    m_wndList.UpdateWindow();
     // Recalculate horizontal scroll width whenever we add a string
     RecalcHorizontalScroll();
 
@@ -220,4 +221,12 @@ void CardListBox::AddRoundedRectToPath(GraphicsPath& path, RectF rect, float rad
     path.AddArc(rect.X + rect.Width - d, rect.Y + rect.Height - d, d, d, 0, 90);
     path.AddArc(rect.X, rect.Y + rect.Height - d, d, d, 90, 90);
     path.CloseFigure();
+}
+
+
+int CardListBox::AddLog(CString strText)
+{
+	int nIndex = AddString(strText);
+
+    return nIndex;
 }

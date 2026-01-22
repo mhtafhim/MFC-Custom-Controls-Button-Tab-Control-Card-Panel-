@@ -41,6 +41,7 @@ public:
     int AddString(LPCTSTR lpszItem); // Updated to handle Horizontal Scrolling
     void ResetContent();
     int GetCount();
+    int AddLog(CString strText);
 
 protected:
     CString m_strTitle;
@@ -50,6 +51,7 @@ protected:
     void UpdateLayout();
     void CreateInnerList();
     void RecalcHorizontalScroll(); // New Helper
+    
 
     afx_msg void OnPaint();
     afx_msg BOOL OnEraseBkgnd(CDC* pDC);

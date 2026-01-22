@@ -291,9 +291,10 @@ BOOL CTestingButtonDlg::OnInitDialog()
 	{
 		CString item;
 		if(!(i%20==0))
-		item.Format(_T("A QUICK BROWN FOX JUMPS OVER THE LAZY DOG. ARO KICHU LIKHTESI JATE LINE TA EKTU BORO HOI DEKHI KOTTUK BORO HOI   %d"), i + 1);
-		m_cardListBox.AddString(item);
+		item.Format(_T("A QUICK BROWN FOX JUMPS OVER THE LAZY DOG  %d"), i + 1);
+		m_cardListBox.AddLog(item);
 	}
+	//m_cardListBox.SetTopIndex(pListBox->GetCount() - 1);
 
 
 
