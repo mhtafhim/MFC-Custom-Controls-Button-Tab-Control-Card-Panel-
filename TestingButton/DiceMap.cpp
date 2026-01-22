@@ -18,10 +18,16 @@ CDiceMap::CDiceMap()
 
     m_iLastHoveredDieId = -1; // -1 means nothing selected
 
+
+    GdiplusStartupInput gdiplusStartupInput;
+    GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
+
 }
 
 CDiceMap::~CDiceMap()
 {
+    GdiplusShutdown(m_gdiplusToken);
+
 }
 
 BEGIN_MESSAGE_MAP(CDiceMap, CStatic)
@@ -31,6 +37,7 @@ BEGIN_MESSAGE_MAP(CDiceMap, CStatic)
     ON_WM_LBUTTONUP() // Capture Mouse Click
     ON_WM_MOUSEMOVE() // <--- ADD THIS
 END_MESSAGE_MAP()
+
 
 void CDiceMap::SetShowPartialDies(bool bShow)
 {
@@ -59,7 +66,9 @@ void CDiceMap::SetReferenceDie(PointD pTL, PointD pBL, PointD pBR)
     m_dDieHeight = std::sqrt(dx_h * dx_h + dy_h * dy_h);
 
     // Angle
-    m_dRotationAngleRad = std::atan2(dy_w, dx_w);
+    //m_dRotationAngleRad = std::atan2(dy_w, dx_w);
+    m_angle = std::atan2(dy_w, dx_w) ;
+	m_angle = m_angle * (180.0 / 3.14159265358979323846); // Convert to degrees
 
     // Center of Ref Die
     m_RefCenter.x = (pTL.x + pBR.x) / 2.0;
@@ -130,6 +139,10 @@ void CDiceMap::RecalculateLayout()
     m_nMaxGridCol = (int)(m_dWaferDiameter / stepX) + 2;
     m_nMaxGridRow = (int)(m_dWaferDiameter / stepY) + 2;
 
+
+    m_nMaxGridCol *= 2;
+    m_nMaxGridRow *= 2;
+
     for (int r = -m_nMaxGridRow; r <= m_nMaxGridRow; r++)
     {
         for (int c = -m_nMaxGridCol; c <= m_nMaxGridCol; c++)
@@ -198,6 +211,14 @@ CPoint CDiceMap::LogicalToDevice(PointD logicPt, int cx, int cy, double scale, i
     long sx = (long)(offsetX + (logicPt.x * scale));
     long sy = (long)(offsetY - (logicPt.y * scale));
     return CPoint(sx, sy);
+}
+
+// Add to CDiceMap class in .h or helper in .cpp
+PointF CDiceMap::LogicalToDeviceF(PointD logicPt, int cx, int cy, double scale, int offsetX, int offsetY)
+{
+    float sx = (float)(offsetX + (logicPt.x * scale));
+    float sy = (float)(offsetY - (logicPt.y * scale));
+    return PointF(sx, sy);
 }
 
 
@@ -532,6 +553,155 @@ void CDiceMap::OnPaint()
     dc.BitBlt(0, 0, cx, cy, &memDC, 0, 0, SRCCOPY);
     memDC.SelectObject(pOldBitmap);
 }
+
+
+//for smooth graphics die drawing but has some performance impact
+//void CDiceMap::OnPaint()
+//{
+//    CPaintDC dc(this);
+//    CRect rectClient;
+//    GetClientRect(&rectClient);
+//    int cx = rectClient.Width();
+//    int cy = rectClient.Height();
+//    if (cx == 0) return;
+//
+//    // --- 1. Standard Double Buffering ---
+//    CDC memDC;
+//    memDC.CreateCompatibleDC(&dc);
+//    CBitmap memBitmap;
+//    memBitmap.CreateCompatibleBitmap(&dc, cx, cy);
+//    CBitmap* pOldBitmap = memDC.SelectObject(&memBitmap);
+//
+//    // Fill Background
+//    memDC.FillSolidRect(rectClient, RGB(225, 225, 225));
+//
+//    // --- 2. Initialize GDI+ Graphics ---
+//    Gdiplus::Graphics graphics(memDC.GetSafeHdc());
+//    graphics.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
+//    graphics.SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAlias);
+//    graphics.SetPixelOffsetMode(Gdiplus::PixelOffsetModeHalf);
+//
+//    // Calculations
+//    double contentSize = m_dWaferDiameter * 1.05;
+//    double scale = min((double)cx, (double)cy) / contentSize;
+//    int centerX = cx / 2;
+//    int centerY = cy / 2;
+//    float rPx = (float)((m_dWaferDiameter / 2.0) * scale);
+//
+//    // --- 3. Draw Wafer Background ---
+//    Gdiplus::Color colorWaferFill(255, 245, 245, 245);
+//    Gdiplus::Color colorWaferOutline(255, 80, 80, 80);
+//    Gdiplus::SolidBrush brushWafer(colorWaferFill);
+//    Gdiplus::Pen penWafer(colorWaferOutline, 2.0f);
+//
+//    graphics.FillEllipse(&brushWafer, centerX - rPx, centerY - rPx, rPx * 2, rPx * 2);
+//    // Note: We draw the outline at the very end to cover grid edges
+//
+//    // =========================================================
+//    // --- 4. DRAW GRID LINES (The Missing Part) ---
+//    // =========================================================
+//
+//    // A. Setup Clipping (So lines don't go outside the circle)
+//    Gdiplus::GraphicsPath path;
+//    path.AddEllipse(centerX - rPx, centerY - rPx, rPx * 2, rPx * 2);
+//    Gdiplus::Region region(&path);
+//    graphics.SetClip(&region);
+//
+//    // B. Setup Grid Pen
+//    Gdiplus::Pen penGrid(Gdiplus::Color(255, 100, 149, 237), 1.0f); // Cornflower Blue
+//
+//    double stepX = m_dDieWidth + m_dGapX;
+//    double stepY = m_dDieHeight + m_dGapY;
+//    double halfStepX = stepX / 2.0;
+//    double halfStepY = stepY / 2.0;
+//    double lineLen = m_dWaferDiameter * 1.5; // Long enough to cross screen
+//
+//    // C. Vertical Lines Loop
+//    for (int c = -m_nMaxGridCol; c <= m_nMaxGridCol; c++) {
+//        PointD offset = { (c * stepX) + halfStepX, 0 };
+//        RotatePoint(offset, m_dRotationAngleRad);
+//
+//        PointD center = { m_RefCenter.x + offset.x, m_RefCenter.y + offset.y };
+//        PointD vUp = { 0, lineLen };
+//        RotatePoint(vUp, m_dRotationAngleRad);
+//
+//        // Convert to GDI+ PointF
+//        Gdiplus::PointF pStart = LogicalToDeviceF({ center.x + vUp.x, center.y + vUp.y }, cx, cy, scale, centerX, centerY);
+//        Gdiplus::PointF pEnd = LogicalToDeviceF({ center.x - vUp.x, center.y - vUp.y }, cx, cy, scale, centerX, centerY);
+//
+//        graphics.DrawLine(&penGrid, pStart, pEnd);
+//    }
+//
+//    // D. Horizontal Lines Loop
+//    for (int r = -m_nMaxGridRow; r <= m_nMaxGridRow; r++) {
+//        PointD offset = { 0, (r * stepY) + halfStepY };
+//        RotatePoint(offset, m_dRotationAngleRad);
+//
+//        PointD center = { m_RefCenter.x + offset.x, m_RefCenter.y + offset.y };
+//        PointD vRight = { lineLen, 0 };
+//        RotatePoint(vRight, m_dRotationAngleRad);
+//
+//        Gdiplus::PointF pStart = LogicalToDeviceF({ center.x - vRight.x, center.y - vRight.y }, cx, cy, scale, centerX, centerY);
+//        Gdiplus::PointF pEnd = LogicalToDeviceF({ center.x + vRight.x, center.y + vRight.y }, cx, cy, scale, centerX, centerY);
+//
+//        graphics.DrawLine(&penGrid, pStart, pEnd);
+//    }
+//
+//    // E. RESET CLIP (Important! So dies can be drawn outside if needed)
+//    graphics.ResetClip();
+//
+//    // =========================================================
+//    // --- 5. Draw Dies ---
+//    // =========================================================
+//
+//    Gdiplus::SolidBrush brSilver(Gdiplus::Color(255, 192, 192, 192));
+//    Gdiplus::SolidBrush brOverlap(Gdiplus::Color(255, 160, 170, 185));
+//    Gdiplus::SolidBrush brRef(Gdiplus::Color(255, 192, 210, 192));
+//    Gdiplus::SolidBrush brSelected(Gdiplus::Color(255, 50, 205, 50));
+//    Gdiplus::Pen penBorder(Gdiplus::Color(255, 50, 50, 50), 1.0f);
+//
+//    // Font Setup
+//    int fontSize = max(10, (int)(m_dDieHeight * scale * 0.4));
+//    Gdiplus::FontFamily fontFamily(L"Arial");
+//    Gdiplus::Font font(&fontFamily, (Gdiplus::REAL)fontSize, Gdiplus::FontStyleRegular, Gdiplus::UnitPixel);
+//    Gdiplus::SolidBrush brushText(Gdiplus::Color(255, 0, 0, 0));
+//    Gdiplus::StringFormat format;
+//    format.SetAlignment(Gdiplus::StringAlignmentCenter);
+//    format.SetLineAlignment(Gdiplus::StringAlignmentCenter);
+//
+//    for (const auto& die : m_DieList)
+//    {
+//        Gdiplus::PointF pts[4];
+//        for (int k = 0; k < 4; k++) {
+//            pts[k] = LogicalToDeviceF(die.corners[k], cx, cy, scale, centerX, centerY);
+//        }
+//
+//        PointD c = die.GetCenter();
+//        double distFromRef = std::sqrt(pow(c.x - m_RefCenter.x, 2) + pow(c.y - m_RefCenter.y, 2));
+//
+//        Gdiplus::Brush* pBrush = &brSilver;
+//        if (die.bSelected) pBrush = &brSelected;
+//        else if (die.bIsPartial) pBrush = &brOverlap;
+//        else if (distFromRef < 0.1) pBrush = &brRef;
+//
+//        graphics.FillPolygon(pBrush, pts, 4);
+//        graphics.DrawPolygon(&penBorder, pts, 4);
+//
+//        // Text
+//        Gdiplus::PointF centerPt = LogicalToDeviceF(die.GetCenter(), cx, cy, scale, centerX, centerY);
+//        CString sID; sID.Format(_T("%d"), die.id);
+//
+//        // Use CStringW for GDI+ compatibility
+//        graphics.DrawString(CStringW(sID), -1, &font, centerPt, &format, &brushText);
+//    }
+//
+//    // --- 6. Draw Wafer Outline (Last, to cover jagged grid ends) ---
+//    graphics.DrawEllipse(&penWafer, centerX - rPx, centerY - rPx, rPx * 2, rPx * 2);
+//
+//    // --- 7. Blit to Screen ---
+//    dc.BitBlt(0, 0, cx, cy, &memDC, 0, 0, SRCCOPY);
+//    memDC.SelectObject(pOldBitmap);
+//}
 
 
 

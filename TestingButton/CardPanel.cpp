@@ -9,21 +9,20 @@ IMPLEMENT_DYNAMIC(CCardPanel, CWnd)
 
 CCardPanel::CCardPanel()
 {
+    // Default title is empty
+    m_strTitle = _T("");
 }
 
 CCardPanel::~CCardPanel()
 {
 }
 
-// ---------------------------------------------------------
-// CRITICAL: This registers the name "MFC_CardPanel" with Windows
-// ---------------------------------------------------------
+// ... [Keep RegisterWindowClass as it is] ...
 BOOL CCardPanel::RegisterWindowClass()
 {
     WNDCLASS wndcls;
     HINSTANCE hInst = AfxGetInstanceHandle();
 
-    // Check if already registered
     if (!(::GetClassInfo(hInst, _T("MFC_CardPanel"), &wndcls)))
     {
         wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
@@ -33,12 +32,9 @@ BOOL CCardPanel::RegisterWindowClass()
         wndcls.hInstance = hInst;
         wndcls.hIcon = NULL;
         wndcls.hCursor = AfxGetApp()->LoadStandardCursor(IDC_ARROW);
-        wndcls.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1); // Default Gray
+        wndcls.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
         wndcls.lpszMenuName = NULL;
-
-        // THIS NAME MUST MATCH THE RESOURCE EDITOR EXACTLY
         wndcls.lpszClassName = _T("MFC_CardPanel");
-
         return AfxRegisterClass(&wndcls);
     }
     return TRUE;
@@ -50,10 +46,20 @@ BEGIN_MESSAGE_MAP(CCardPanel, CWnd)
     ON_WM_NCHITTEST()
 END_MESSAGE_MAP()
 
-// Prevent flicker
+// --- NEW: Implementation of SetTitle ---
+void CCardPanel::SetTitle(CString strTitle)
+{
+    m_strTitle = strTitle;
+    if (GetSafeHwnd())
+    {
+        Invalidate(); // Trigger a repaint
+        UpdateWindow();
+    }
+}
+
 BOOL CCardPanel::OnEraseBkgnd(CDC* pDC)
 {
-    return TRUE; // We handle all painting in OnPaint
+    return TRUE;
 }
 
 void CCardPanel::OnPaint()
@@ -63,45 +69,80 @@ void CCardPanel::OnPaint()
     CRect rectClient;
     GetClientRect(&rectClient);
 
-    // Double Buffer
     CMemDC memDC(dc, this);
     CDC* pDC = &memDC.GetDC();
 
-    // 1. FILL BACKGROUND 
-    // Match this color to your Main Dialog Background (Light Blue)
-    pDC->FillSolidRect(rectClient, RGB(244, 247, 249)); //235, 236, 237
+    // 1. Background (Light Blue-ish)
+    pDC->FillSolidRect(rectClient, RGB(244, 247, 249));
 
     Graphics graphics(pDC->GetSafeHdc());
     graphics.SetSmoothingMode(SmoothingModeAntiAlias);
+    graphics.SetTextRenderingHint(TextRenderingHintClearTypeGridFit); // Better text quality
 
-    // 2. DEFINE BOX
+    // 2. Define Box Dimensions
     float margin = 10.0f;
     RectF rectWhite(
         (REAL)rectClient.left + margin, (REAL)rectClient.top + margin,
         (REAL)rectClient.Width() - (margin * 2), (REAL)rectClient.Height() - (margin * 2));
-    float radius = 12.0f;
+    float radius = 10.0f;
 
-    // 3. DRAW SHADOW (Simple soft shadow)
+    // 3. Draw Shadow
     {
         RectF r = rectWhite;
-        r.Inflate(1.8f, 1.8f); // Make bigger
-        r.Offset(0, 0);     // Move down
+        r.Offset(0, 2.0f); // Slight offset down
 
         GraphicsPath path;
-        AddRoundedRectToPath(path, r, radius + 2.0f); // Radius + Inflate
-        SolidBrush b(Color(100, 235, 238, 244)); // Transparent Black
+        AddRoundedRectToPath(path, r, radius);
+
+        // Very soft shadow color
+        SolidBrush b(Color(20, 0, 0, 0));
         graphics.FillPath(&b, &path);
     }
 
-    // 4. DRAW WHITE CARD
+    // 4. Draw White Card Background
     GraphicsPath path;
     AddRoundedRectToPath(path, rectWhite, radius);
 
-    SolidBrush brushWhite(Color(255, 255, 255, 255)); //235, 236, 237
+    SolidBrush brushWhite(Color(255, 255, 255, 255));
     graphics.FillPath(&brushWhite, &path);
 
-    Pen penBorder(Color(255, 220, 220, 220), 1.0f);
+    Pen penBorder(Color(255, 225, 225, 225), 1.0f);
     graphics.DrawPath(&penBorder, &path);
+
+    // 5. DRAW TITLE AND LINE (If title exists)
+    if (!m_strTitle.IsEmpty())
+    {
+        // A. Define Font (Segoe UI, Bold, ~11pt)
+        FontFamily fontFamily(L"Segoe UI");
+        Gdiplus::Font font(&fontFamily, 15, FontStyleBold, UnitPixel);
+
+        // B. Define Text Color (Dark Slate Blue: RGB 44, 62, 80)
+        SolidBrush textBrush(Color(255, 44, 62, 80));
+
+        // C. Define Position (Padding inside the white box)
+        RectF textRect = rectWhite;
+        textRect.Inflate(-15, -12); // Padding: Left 15, Top 12
+
+        // D. Draw String
+        StringFormat format;
+        format.SetAlignment(StringAlignmentNear);
+        format.SetLineAlignment(StringAlignmentNear);
+
+        // Convert CString to WCHAR for GDI+
+        graphics.DrawString(m_strTitle, -1, &font, textRect, &format, &textBrush);
+
+        // E. Draw Divider Line
+        // Calculate Y position: Title Top + Height + Padding
+        float lineY = rectWhite.Y + 40.0f;
+
+        // Light Gray Line
+        Pen penLine(Color(255, 230, 230, 230), 1.0f);
+
+        // Draw line from left (with padding) to right
+        graphics.DrawLine(&penLine,
+            rectWhite.X + 10.0f, lineY,
+            rectWhite.GetRight() - 10.0f, lineY);
+    }
 }
 
 void CCardPanel::AddRoundedRectToPath(GraphicsPath& path, RectF rect, float radius)
@@ -114,12 +155,8 @@ void CCardPanel::AddRoundedRectToPath(GraphicsPath& path, RectF rect, float radi
     path.CloseFigure();
 }
 
-
-
 LRESULT CCardPanel::OnNcHitTest(CPoint point)
 {
-    // HTTRANSPARENT tells Windows: 
-    // "I am not here. Pass the click through me to the window behind me 
-    //  OR check if there is a sibling window (like a button) at this location."
+    // Allows clicks to pass through to underlying window or overlaying controls
     return HTTRANSPARENT;
 }

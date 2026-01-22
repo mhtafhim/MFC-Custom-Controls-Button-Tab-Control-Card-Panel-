@@ -184,6 +184,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BottomTabCtrl.h" />
+    <ClInclude Include="CardListBox.h" />
     <ClInclude Include="CardPanel.h" />
     <ClInclude Include="CardPanelWithPictureControl.h" />
     <ClInclude Include="ColorButton.h" />
@@ -192,6 +193,7 @@
     <ClInclude Include="CustomRadioButton.h" />
     <ClInclude Include="DiceMap.h" />
     <ClInclude Include="DiceViewDlg.h" />
+    <ClInclude Include="FlatListBox.h" />
     <ClInclude Include="FlatTabCtrl.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GradientButton.h" />
@@ -213,6 +215,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BottomTabCtrl.cpp" />
+    <ClCompile Include="CardListBox.cpp" />
     <ClCompile Include="CardPanel.cpp" />
     <ClCompile Include="CardPanelWithPictureControl.cpp" />
     <ClCompile Include="ColorButton.cpp" />
@@ -221,6 +224,7 @@
     <ClCompile Include="CustomRadioButton.cpp" />
     <ClCompile Include="DiceMap.cpp" />
     <ClCompile Include="DiceViewDlg.cpp" />
+    <ClCompile Include="FlatListBox.cpp" />
     <ClCompile Include="FlatTabCtrl.cpp" />
     <ClCompile Include="GradientButton.cpp" />
     <ClCompile Include="IconButton.cpp" />

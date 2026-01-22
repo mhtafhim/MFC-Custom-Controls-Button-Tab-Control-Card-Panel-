@@ -1,4 +1,9 @@
 #pragma once
+
+#include <gdiplus.h>
+#pragma comment(lib, "gdiplus.lib")
+using namespace Gdiplus;
+
 #include <vector>
 #include <algorithm>
 
@@ -50,14 +55,18 @@ public:
 
 
 
+    ULONG_PTR m_gdiplusToken; // Add this
 
-protected:
+
+
+public:
     double m_dWaferDiameter;
     double m_dGapX;
     double m_dGapY;
     double m_dDieWidth;
     double m_dDieHeight;
     double m_dRotationAngleRad;
+	double m_angle;
     PointD m_RefCenter;
     bool m_bShowPartialDies;
 
@@ -69,6 +78,11 @@ protected:
 
     // Helpers
     CPoint LogicalToDevice(PointD logicPt, int cx, int cy, double scale, int offsetX, int offsetY);
+
+    // Helper for Drawing (Smooth lines)
+    Gdiplus::PointF LogicalToDeviceF(PointD logicPt, int cx, int cy, double scale, int offsetX, int offsetY);
+
+
     void RotatePoint(PointD& pt, double angleRad);
     bool CheckDieIntersection(PointD dieCenter, double w, double h, double angRad, double waferRad, bool& outIsPartial);
 

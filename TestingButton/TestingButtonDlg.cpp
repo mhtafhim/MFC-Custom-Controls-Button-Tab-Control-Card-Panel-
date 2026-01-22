@@ -87,6 +87,8 @@ void CTestingButtonDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_ROUND_STATIC, m_roundStatic);
 	DDX_Control(pDX, IDC_STATIC_DICEMAP, m_diceMap);
 	DDX_Control(pDX, IDC_MASK_CHECK, m_maskCheck);
+	DDX_Control(pDX, IDC_PROGRESS1, m_progressBar);
+	DDX_Control(pDX, IDC_LIST2, m_cardListBox);
 }
 
 BEGIN_MESSAGE_MAP(CTestingButtonDlg, CDialogEx)
@@ -126,6 +128,7 @@ BEGIN_MESSAGE_MAP(CTestingButtonDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON4, &CTestingButtonDlg::OnBnClickedButton4)
 
 
+	ON_BN_CLICKED(IDC_BUTTON_TEST3, &CTestingButtonDlg::OnBnClickedButtonTest3)
 END_MESSAGE_MAP()
 
 
@@ -169,7 +172,7 @@ BOOL CTestingButtonDlg::OnInitDialog()
 
 	//test_button.EnableWindowsTheming(TRUE);
 
-
+	
 
 
 
@@ -265,10 +268,32 @@ BOOL CTestingButtonDlg::OnInitDialog()
 	m_gradientButton.SetIconByID(IDI_ICON9, 30);
 
 
+	CString str;
+	// Format to 3 decimal places (change .3 to whatever you need)
+	str.Format(_T("%.3f"), m_diceMap.m_angle);
+	SetDlgItemText(IDC_EDIT10, str);
+
 
 	UpdateTimeLabel();       // Show time immediately
 	SetTimer(1, 1000, NULL);
  
+
+	m_progressBar.SetRange(0, 100);
+	m_progressBar.SetPos(progressValue);
+
+	m_cardCtrl.SetTitle(_T("Demo Card Panel"));
+
+
+	// Use it like a normal ListBox
+	m_cardListBox.SetTitle(_T("testing testing"));
+
+	for (int i = 1; i <= 100; i++)
+	{
+		CString item;
+		if(!(i%20==0))
+		item.Format(_T("A QUICK BROWN FOX JUMPS OVER THE LAZY DOG. ARO KICHU LIKHTESI JATE LINE TA EKTU BORO HOI DEKHI KOTTUK BORO HOI   %d"), i + 1);
+		m_cardListBox.AddString(item);
+	}
 
 
 
@@ -716,4 +741,14 @@ void CTestingButtonDlg::InitEditControls()
 	// Set Point Bottom-Right
 	SetEditVal(IDC_EDIT6, pBR.x);
 	SetEditVal(IDC_EDIT5, pBR.y);
+
+
+	
+}
+void CTestingButtonDlg::OnBnClickedButtonTest3()
+{
+	progressValue += 10;
+	m_progressBar.SetPos(progressValue);
+
+	// TODO: Add your control notification handler code here
 }

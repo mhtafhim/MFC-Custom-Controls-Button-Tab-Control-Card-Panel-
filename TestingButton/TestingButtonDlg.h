@@ -19,6 +19,7 @@
 #include "CustomRadioButton.h"
 #include "RoundStatic.h"
 #include "DiceMap.h"
+#include "CardListBox.h"
 
 // CTestingButtonDlg dialog
 class CTestingButtonDlg : public CDialogEx
@@ -102,15 +103,15 @@ public:
 
 
 
-	double m_dWaferDiameter=300;
+	double m_dWaferDiameter=100;
 	double m_dGapX = 1.0;
 	double m_dGapY = 1.0;
-	PointD pTL = { 32.58,121.255 };
-	PointD pBL = { 32.24, 88.965 };
-	PointD pBR = { 56.629, 88.699 };
-	//PointD pTL = { 0 , 0 };
-	//PointD pBL = { 0 , -5 };
-	//PointD pBR = {5 , -5 };
+	//PointD pTL = { 32.58,121.255 };
+	//PointD pBL = { 32.24, 88.965 };
+	//PointD pBR = { 56.629, 88.699 };
+	PointD pTL = { 0 , 0 };
+	PointD pBL = { 0 , -5 };
+	PointD pBR = {5 , -5 };
 
 	//PointD pTL = { -2 , 4 };
 	//PointD pBL = { -4 , 2 };
@@ -132,4 +133,8 @@ public:
 	double GetDoubleFromEdit(int nID);
 	void SetEditVal(int nID, double val);
 	void InitEditControls();
+	CProgressCtrl m_progressBar;
+	int progressValue = 0;
+	afx_msg void OnBnClickedButtonTest3();
+	CardListBox m_cardListBox;
 };

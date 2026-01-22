@@ -96,6 +96,12 @@
     <ClInclude Include="DiceViewDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FlatListBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CardListBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestingButton.cpp">
@@ -168,6 +174,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DiceViewDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FlatListBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CardListBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
