@@ -20,6 +20,12 @@
 #include "RoundStatic.h"
 #include "DiceMap.h"
 #include "CardListBox.h"
+#include "InfoIcon.h"
+#include "MultiStateStatusCtrl.h"
+#include "StatusPanelCtrl.h"
+#include "BackgroundBox.h"
+#include "StatusLabel.h"
+#include "BorderEdit.h"
 
 // CTestingButtonDlg dialog
 class CTestingButtonDlg : public CDialogEx
@@ -55,7 +61,7 @@ protected:
 public:
 	CColorButton test_button;
 
-	CMyListCtrl tableCtrl;
+	CListCtrl tableCtrl;
 
 
 	CModernTabCtrl tabCtrl;
@@ -100,6 +106,9 @@ public:
 	CCustomRadioButton m_radioButton;
 
 
+	CToolTipCtrl m_ToolTip;                      // 1. Variable for the popup bubble
+	virtual BOOL PreTranslateMessage(MSG* pMsg); // 2. Function to detect mouse hover
+
 
 
 
@@ -137,4 +146,18 @@ public:
 	int progressValue = 0;
 	afx_msg void OnBnClickedButtonTest3();
 	CardListBox m_cardListBox;
+	afx_msg void OnLbnSelchangeList2();
+	CInfoIcon m_infoIcon;
+
+
+	CStatusPanelCtrl m_statusCtrl;
+	CBackgroundBox m_backgroundBox;
+	CStatusLabel m_statusLight;
+	CStatusLabel m_statusLabel2;
+	CStatusLabel m_statusLabel3;
+	CStatusLabel m_statusLabel4;
+	CStatusLabel m_statusLabel5;
+	CStatusLabel m_statusLabel6;
+	CStyleStatic m_styleText;
+	CBorderEdit m_topLeftEdit;
 };

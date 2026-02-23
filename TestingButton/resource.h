@@ -26,6 +26,7 @@
 #define IDI_ICON8                       149
 #define IDI_ICON9                       150
 #define IDD_DICEVIEW_DLG                151
+#define IDI_ICON10                      154
 #define IDC_BUTTON1                     1000
 #define IDC_BUTTON_TEST                 1000
 #define IDC_LIST1                       1001
@@ -72,14 +73,26 @@
 #define IDC_EDIT10                      1040
 #define IDC_PROGRESS1                   1041
 #define IDC_LIST2                       1042
+#define IDC_SPEED_INFO                  1043
+#define IDC_STATIC_ANGLE                1045
+#define IDC_STATIC_INFO                 1046
+#define IDC_STATUS_LIGHT                1047
+#define IDC_STATIC_BOX                  1048
+#define IDC_STATIC_STATUS_LIGHT         1049
+#define IDC_STATIC_STATUS_LIGHT2        1050
+#define IDC_STATIC_STATUS_LIGHT3        1051
+#define IDC_STATIC_STATUS_LIGHT4        1052
+#define IDC_STATIC_STATUS_LIGHT5        1053
+#define IDC_STATIC_STATUS_LIGHT6        1054
+#define IDC_STATIC_STYLE_TEXT           1055
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        154
+#define _APS_NEXT_RESOURCE_VALUE        155
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1043
+#define _APS_NEXT_CONTROL_VALUE         1056
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

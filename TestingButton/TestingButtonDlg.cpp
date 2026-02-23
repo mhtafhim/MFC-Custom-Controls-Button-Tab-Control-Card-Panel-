@@ -89,6 +89,17 @@ void CTestingButtonDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_MASK_CHECK, m_maskCheck);
 	DDX_Control(pDX, IDC_PROGRESS1, m_progressBar);
 	DDX_Control(pDX, IDC_LIST2, m_cardListBox);
+	DDX_Control(pDX, IDC_STATIC_INFO, m_infoIcon);
+	DDX_Control(pDX, IDC_STATUS_LIGHT, m_statusCtrl);
+	DDX_Control(pDX, IDC_STATIC_BOX, m_backgroundBox);
+	DDX_Control(pDX, IDC_STATIC_STATUS_LIGHT, m_statusLight);
+	DDX_Control(pDX, IDC_STATIC_STATUS_LIGHT2, m_statusLabel2);
+	DDX_Control(pDX, IDC_STATIC_STATUS_LIGHT3, m_statusLabel3);
+	DDX_Control(pDX, IDC_STATIC_STATUS_LIGHT4, m_statusLabel4);
+	DDX_Control(pDX, IDC_STATIC_STATUS_LIGHT5, m_statusLabel5);
+	DDX_Control(pDX, IDC_STATIC_STATUS_LIGHT6, m_statusLabel6);
+	DDX_Control(pDX, IDC_STATIC_STYLE_TEXT, m_styleText);
+	DDX_Control(pDX, IDC_EDIT2, m_topLeftEdit);
 }
 
 BEGIN_MESSAGE_MAP(CTestingButtonDlg, CDialogEx)
@@ -122,6 +133,8 @@ BEGIN_MESSAGE_MAP(CTestingButtonDlg, CDialogEx)
 	ON_COMMAND_EX(IDC_BUTTON_DOWN, OnToolButtonClicked)
 	ON_COMMAND_EX(IDC_BUTTON_BOTTOM_RIGHT, OnToolButtonClicked)
 
+	ON_BN_CLICKED(IDC_BUTTON5, OnBnClickedButton5)
+
 
 	ON_BN_CLICKED(IDC_BUTTON_TEST2, &CTestingButtonDlg::OnBnClickedButtonTest2)
 	ON_BN_CLICKED(IDC_MASK_CHECK, &CTestingButtonDlg::OnBnClickedMaskCheck)
@@ -129,6 +142,7 @@ BEGIN_MESSAGE_MAP(CTestingButtonDlg, CDialogEx)
 
 
 	ON_BN_CLICKED(IDC_BUTTON_TEST3, &CTestingButtonDlg::OnBnClickedButtonTest3)
+	ON_LBN_SELCHANGE(IDC_LIST2, &CTestingButtonDlg::OnLbnSelchangeList2)
 END_MESSAGE_MAP()
 
 
@@ -296,7 +310,39 @@ BOOL CTestingButtonDlg::OnInitDialog()
 	}
 	//m_cardListBox.SetTopIndex(pListBox->GetCount() - 1);
 
+		// 1. Create the tooltip "bubble"
+	m_ToolTip.Create(this, TTS_ALWAYSTIP | TTS_BALLOON);
 
+	// 2. Link the tooltip to your Picture Control (IDC_INFO_ICON)
+	//    Change the text inside _T("") to your disclaimer.
+	m_ToolTip.AddTool(GetDlgItem(IDC_STATIC_ANGLE), _T("DISCLAIMER: This is read-only info.\nIt cannot be clicked.This message will be much much longer. \n 1) fine means slowest \n 2)normal means medium \n 3)fast means speedy. "));
+	//m_ToolTip.AddTool(GetDlgItem(IDC_SPEED_INFO), _T(" this is for picture control \n DISCLAIMER: This is read-only info.\nIt cannot be clicked.This message will be much much longer. \n 1) fine means slowest \n 2)normal means medium \n 3)fast means speedy. "));
+
+	// 3. (Optional) Set width so long text wraps to the next line
+	m_ToolTip.SetMaxTipWidth(300);
+
+	m_infoIcon.SetIconSize(20);
+
+
+	// 1. Setup the Wrapper Visuals
+	m_statusCtrl.SetTitle(_T("PROCESS STATE")); // Add the title at the top
+	m_statusCtrl.SetCornerRadius(20);           // Make it round
+	m_statusCtrl.SetVertical(TRUE);             // Stack buttons vertically
+
+
+
+	//Status Control
+	// CONFIGURATION: Add as many segments as you need here
+	m_statusCtrl.AddSegment(101, _T("ALARM"), RGB(220, 50, 50)); // Red
+	m_statusCtrl.AddSegment(102, _T("IDLE"), RGB(200, 180, 0)); // Amber
+	m_statusCtrl.AddSegment(103, _T("RUN"), RGB(0, 180, 0));   // Green
+	m_statusCtrl.AddSegment(104, _T("SOMETHING"), RGB(0, 0, 180));   // Green
+
+
+	m_statusCtrl.SetState(101);
+
+	m_statusLight.SetState(CStatusLabel::LightState::Green);
+	m_statusLight.SetBackgroundColor(RGB(230, 255, 255)); // Match the background of your custom box
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -509,12 +555,17 @@ void CTestingButtonDlg::OnBnClickedButtonBottomRight()
 	// TODO: Add your control notification handler code here
 }
 
+int status = 101;
 void CTestingButtonDlg::OnBnClickedButton5()
 {
-
-
+	status++;
+	if (status > 104)
+		status = 101;
+		
+	m_statusCtrl.SetState(status);
 	// TODO: Add your control notification handler code here
 	m_ctrLightTower.SetMode(TOWER_OFF);
+	//AfxMessageBox(_T("Button 5 clicked"));
 }
 
 void CTestingButtonDlg::OnBnClickedButtonRight()
@@ -752,4 +803,21 @@ void CTestingButtonDlg::OnBnClickedButtonTest3()
 	m_progressBar.SetPos(progressValue);
 
 	// TODO: Add your control notification handler code here
+}
+
+void CTestingButtonDlg::OnLbnSelchangeList2()
+{
+	// TODO: Add your control notification handler code here
+}
+
+BOOL CTestingButtonDlg::PreTranslateMessage(MSG* pMsg)
+{
+	// If the tooltip exists, let it check the mouse position
+	if (m_ToolTip.GetSafeHwnd())
+	{
+		m_ToolTip.RelayEvent(pMsg);
+	}
+
+	// Continue normal processing
+	return CDialogEx::PreTranslateMessage(pMsg);
 }
