@@ -189,9 +189,11 @@
     <ClInclude Include="CardListBox.h" />
     <ClInclude Include="CardPanel.h" />
     <ClInclude Include="CardPanelWithPictureControl.h" />
+    <ClInclude Include="CheckComboBox.h" />
     <ClInclude Include="ColorButton.h" />
     <ClInclude Include="ColorSlider.h" />
     <ClInclude Include="ColorSliderCtrl.h" />
+    <ClInclude Include="CustomGroupBox.h" />
     <ClInclude Include="CustomRadioButton.h" />
     <ClInclude Include="DiceMap.h" />
     <ClInclude Include="DiceViewDlg.h" />
@@ -226,9 +228,11 @@
     <ClCompile Include="CardListBox.cpp" />
     <ClCompile Include="CardPanel.cpp" />
     <ClCompile Include="CardPanelWithPictureControl.cpp" />
+    <ClCompile Include="CheckComboBox.cpp" />
     <ClCompile Include="ColorButton.cpp" />
     <ClCompile Include="ColorSlider.cpp" />
     <ClCompile Include="ColorSliderCtrl.cpp" />
+    <ClCompile Include="CustomGroupBox.cpp" />
     <ClCompile Include="CustomRadioButton.cpp" />
     <ClCompile Include="DiceMap.cpp" />
     <ClCompile Include="DiceViewDlg.cpp" />

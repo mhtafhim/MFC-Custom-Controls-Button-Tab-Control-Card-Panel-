@@ -75,60 +75,63 @@ void CStatusPanelCtrl::GetRoundedRectPath(GraphicsPath* pPath, RectF rect, int d
     pPath->CloseFigure();
 }
 
+
 void CStatusPanelCtrl::OnPaint()
 {
     CPaintDC dc(this);
     CRect rectClient;
     GetClientRect(&rectClient);
 
-    // 1. Double Buffering (Standard MFC way to prepare buffer)
+    // 1. Double Buffering
     CMemDC memDC(dc, rectClient);
     CDC& bufferDC = memDC.GetDC();
 
-    // Fill background with Parent's color so corners blend perfectly
-    bufferDC.FillSolidRect(rectClient, GetSysColor(COLOR_3DFACE));
+    // Fill background with Parent's color
+    bufferDC.FillSolidRect(rectClient, RGB(225, 232, 237));
 
     // 2. Initialize GDI+ Graphics
     Graphics graphics(bufferDC.GetSafeHdc());
-
-    // ** CRITICAL: This makes the corners smooth **
     graphics.SetSmoothingMode(SmoothingModeAntiAlias);
     graphics.SetTextRenderingHint(TextRenderingHintClearTypeGridFit);
 
     // 3. Define the Main Panel Rectangle
     RectF rectPanel((float)rectClient.left, (float)rectClient.top, (float)rectClient.Width() - 1, (float)rectClient.Height() - 1);
-    rectPanel.Inflate(-1, -1); // Slight padding from edge
+    rectPanel.Inflate(-1, -1);
 
-    // Create Rounded Path
+    // Create Rounded Path for the Border
     GraphicsPath pathPanel;
     GetRoundedRectPath(&pathPanel, rectPanel, m_nCornerRadius);
 
-    // Draw Panel Background (Dark Grey)
-    SolidBrush brushBg(Color(255, 45, 45, 48));
-    graphics.FillPath(&brushBg, &pathPanel);
-
-    // Draw Panel Border
-    Pen penBorder(Color(255, 100, 100, 100), 1.0f);
+    // Draw Panel Border (Thin Grey/Black)
+    Pen penBorder(Color(255, 150, 150, 150), 1.0f);
     graphics.DrawPath(&penBorder, &pathPanel);
 
-    // 4. Draw Title
+    // 4. Draw Title and Separator Line
     float titleHeight = 0;
     if (!m_strTitle.IsEmpty())
     {
-        titleHeight = 30.0f;
+        titleHeight = 22.0f; // Adjusted height slightly for better spacing
 
         FontFamily fontFamily(L"Segoe UI");
         Gdiplus::Font fontTitle(&fontFamily, 10, FontStyleRegular, UnitPoint);
-        SolidBrush brushText(Color(255, 200, 200, 200)); // Light Grey
+        SolidBrush brushText(Color(255, 0, 0, 0));
 
         StringFormat format;
         format.SetAlignment(StringAlignmentCenter);
         format.SetLineAlignment(StringAlignmentCenter);
 
         RectF rectTitle = rectPanel;
-        rectTitle.Height = titleHeight; // Restrict to top area
+        rectTitle.Height = titleHeight;
 
         graphics.DrawString(m_strTitle, -1, &fontTitle, rectTitle, &format, &brushText);
+
+        // Draw Line under Title
+        float lineY = rectPanel.Y + titleHeight;
+        Pen penLine(Color(255, 0, 0, 0), 1.0f);
+
+        graphics.SetClip(&pathPanel);
+        graphics.DrawLine(&penLine, rectPanel.X, lineY, rectPanel.X + rectPanel.Width, lineY);
+        graphics.ResetClip();
     }
 
     // 5. Draw Segments
@@ -138,10 +141,13 @@ void CStatusPanelCtrl::OnPaint()
         RectF rcContent = rectPanel;
         rcContent.Y += titleHeight;
         rcContent.Height -= titleHeight;
-        rcContent.Inflate(-5, -5); // Padding inside the wrapper
+
+        // Add padding so segments don't touch the border
+        float padding = 6.0f;
+        rcContent.Inflate(-padding, -padding);
 
         size_t count = m_segments.size();
-        float gap = 3.0f;
+        float gap = 4.0f; // Slightly larger gap for rounded look
         float segW, segH;
 
         if (m_bVertical) {
@@ -159,46 +165,54 @@ void CStatusPanelCtrl::OnPaint()
         rcSeg.Width = segW;
         rcSeg.Height = segH;
 
-        // Segment Font
         FontFamily fontFamilySeg(L"Arial");
-        Gdiplus::Font fontSeg(&fontFamilySeg, 10, FontStyleBold, UnitPoint);
+        Gdiplus::Font fontSeg(&fontFamilySeg, 9, FontStyleBold, UnitPoint);
         StringFormat format;
         format.SetAlignment(StringAlignmentCenter);
         format.SetLineAlignment(StringAlignmentCenter);
+
+        // [NEW] Calculate Inner Radius to match Outer Radius visually
+        // Geometrically, Inner Radius = Outer Radius - Padding
+        int segRadius = m_nCornerRadius - (int)padding;
+        if (segRadius < 2) segRadius = 2; // Prevent invalid radius
 
         for (size_t i = 0; i < count; i++)
         {
             PanelSegment& seg = m_segments[i];
             bool isActive = (seg.nID == m_nActiveId);
 
-            // Convert COLORREF to GDI+ Color
+            // [NEW] Create Path for the Segment
+            GraphicsPath segPath;
+            GetRoundedRectPath(&segPath, rcSeg, segRadius);
+
             Color segColor;
             segColor.SetFromCOLORREF(seg.color);
 
-            // Calculate Dimmed Color if inactive
             if (!isActive) {
-                segColor = Color(255, segColor.GetR() / 5, segColor.GetG() / 5, segColor.GetB() / 5);
+                // Dim the color
+                segColor = Color(255, segColor.GetR() / 2.5, segColor.GetG() / 2.5, segColor.GetB() / 2.5);
             }
 
+            // Fill the Rounded Path
             SolidBrush brushSeg(segColor);
+            graphics.FillPath(&brushSeg, &segPath);
 
-            // Draw Segment Box
-            graphics.FillRectangle(&brushSeg, rcSeg);
-
-            // Draw Highlight Border (White)
+            // Draw Border/Highlight
             if (isActive) {
+                // White highlight border
                 Pen penHigh(Color(255, 255, 255, 255), 2.0f);
-                // Draw slightly inside to avoid clipping
-                RectF rcHigh = rcSeg;
-                rcHigh.Inflate(-1, -1);
-                graphics.DrawRectangle(&penHigh, rcHigh);
+                graphics.DrawPath(&penHigh, &segPath);
+            }
+            else {
+                // Subtle border for inactive items
+                Pen penDim(Color(100, 0, 0, 0), 1.0f);
+                graphics.DrawPath(&penDim, &segPath);
             }
 
             // Draw Text
             SolidBrush brushText(isActive ? Color(255, 0, 0, 0) : Color(255, 100, 100, 100));
             graphics.DrawString(seg.strLabel, -1, &fontSeg, rcSeg, &format, &brushText);
 
-            // Move to next position
             if (m_bVertical) rcSeg.Offset(0, segH + gap);
             else rcSeg.Offset(segW + gap, 0);
         }

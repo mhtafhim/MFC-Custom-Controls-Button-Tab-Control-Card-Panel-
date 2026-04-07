@@ -26,6 +26,10 @@
 #include "BackgroundBox.h"
 #include "StatusLabel.h"
 #include "BorderEdit.h"
+#include "CustomGroupBox.h"
+#include "CheckComboBox.h"
+
+#define IDC_MY_FLOATING_COMBO 10001
 
 // CTestingButtonDlg dialog
 class CTestingButtonDlg : public CDialogEx
@@ -57,6 +61,16 @@ protected:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
+
+
+	int m_nEditRow;               // Tracks the row being edited
+	int m_nEditCol;               // Tracks the col being 
+
+	afx_msg void OnNMClickList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnCbnCloseUpComboEditor();
+	afx_msg void OnCbnKillFocusComboEditor();
+	afx_msg void OnLvnBeginScrollList(NMHDR* pNMHDR, LRESULT* pResult);
+
 	DECLARE_MESSAGE_MAP()
 public:
 	CColorButton test_button;
@@ -160,4 +174,8 @@ public:
 	CStatusLabel m_statusLabel6;
 	CStyleStatic m_styleText;
 	CBorderEdit m_topLeftEdit;
+	CCustomGroupBox m_customGroupBox;
+
+	CCheckComboBox m_ComboEditor;
+	CListCtrl m_ListCtrl;
 };

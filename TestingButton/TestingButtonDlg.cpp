@@ -100,6 +100,9 @@ void CTestingButtonDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_STATIC_STATUS_LIGHT6, m_statusLabel6);
 	DDX_Control(pDX, IDC_STATIC_STYLE_TEXT, m_styleText);
 	DDX_Control(pDX, IDC_EDIT2, m_topLeftEdit);
+	DDX_Control(pDX, IDC_GROUP_BOX, m_customGroupBox);
+	//DDX_Control(pDX, IDC_COMBO1, m_ComboEditor);
+	DDX_Control(pDX, IDC_LIST3, m_ListCtrl);
 }
 
 BEGIN_MESSAGE_MAP(CTestingButtonDlg, CDialogEx)
@@ -143,6 +146,13 @@ BEGIN_MESSAGE_MAP(CTestingButtonDlg, CDialogEx)
 
 	ON_BN_CLICKED(IDC_BUTTON_TEST3, &CTestingButtonDlg::OnBnClickedButtonTest3)
 	ON_LBN_SELCHANGE(IDC_LIST2, &CTestingButtonDlg::OnLbnSelchangeList2)
+
+	// ADD THESE 4 LINES:
+	ON_NOTIFY(NM_CLICK, IDC_LIST3, &CTestingButtonDlg::OnNMClickList)
+	ON_NOTIFY(LVN_BEGINSCROLL, IDC_LIST3, &CTestingButtonDlg::OnLvnBeginScrollList)
+	ON_CBN_CLOSEUP(IDC_MY_FLOATING_COMBO, &CTestingButtonDlg::OnCbnCloseUpComboEditor)
+	ON_CBN_KILLFOCUS(IDC_MY_FLOATING_COMBO, &CTestingButtonDlg::OnCbnKillFocusComboEditor)
+
 END_MESSAGE_MAP()
 
 
@@ -343,6 +353,43 @@ BOOL CTestingButtonDlg::OnInitDialog()
 
 	m_statusLight.SetState(CStatusLabel::LightState::Green);
 	m_statusLight.SetBackgroundColor(RGB(230, 255, 255)); // Match the background of your custom box
+
+
+
+	// --- Setup the Table ---
+	m_ListCtrl.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
+	m_ListCtrl.InsertColumn(0, _T("Name"), LVCFMT_LEFT, 100);
+	m_ListCtrl.InsertColumn(1, _T("Favorite Fruits (Click to edit)"), LVCFMT_LEFT, 200);
+
+	// Add dummy data
+	m_ListCtrl.InsertItem(0, _T("John Doe"));
+	m_ListCtrl.SetItemText(0, 1, _T("Apple"));
+	m_ListCtrl.InsertItem(1, _T("Jane Smith"));
+	m_ListCtrl.SetItemText(1, 1, _T("Banana, Grape"));
+
+	// --- Setup the Floating Combobox ---
+	//m_ComboEditor.Create(WS_CHILD | WS_VSCROLL | CBS_DROPDOWNLIST | CBS_OWNERDRAWFIXED | CBS_HASSTRINGS,
+	//	CRect(0, 0, 0, 0), &m_ListCtrl, IDC_MY_FLOATING_COMBO);
+
+	m_ComboEditor.Create(WS_CHILD | WS_VSCROLL | CBS_DROPDOWNLIST | CBS_OWNERDRAWFIXED | CBS_HASSTRINGS,
+		CRect(0, 0, 0, 0), this, IDC_MY_FLOATING_COMBO);
+
+	m_ComboEditor.AddString(_T("Apple"));
+	m_ComboEditor.AddString(_T("Banana"));
+	m_ComboEditor.AddString(_T("Orange"));
+	m_ComboEditor.AddString(_T("Grape"));
+
+	m_nEditRow = -1;
+	m_nEditCol = -1;
+	// Get the font used by the list control
+	CFont* pFont = m_ListCtrl.GetFont();
+	// Apply it to the combobox
+	m_ComboEditor.SetFont(pFont);
+	// This trick makes the List Control rows taller
+	CImageList m_imageFix;
+	m_imageFix.Create(1, 22, ILC_COLOR, 1, 1); // The '22' is the new row height
+	m_ListCtrl.SetImageList(&m_imageFix, LVSIL_SMALL);
+
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -820,4 +867,105 @@ BOOL CTestingButtonDlg::PreTranslateMessage(MSG* pMsg)
 
 	// Continue normal processing
 	return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+void CTestingButtonDlg::OnNMClickList(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+
+	// SAVE THE PREVIOUS ROW FIRST if the combo was already open
+	if (m_ComboEditor.IsWindowVisible())
+	{
+		OnCbnCloseUpComboEditor();
+	}
+
+	int nClickedRow = pNMItemActivate->iItem;
+	int nClickedCol = pNMItemActivate->iSubItem;
+
+	// Check if we clicked the editable column (Column 1)
+	if (nClickedRow != -1 && nClickedCol == 1)
+	{
+		// Set the NEW indices
+		m_nEditRow = nClickedRow;
+		m_nEditCol = nClickedCol;
+
+		// Get the bounding rectangle of the cell inside the List Control
+		CRect rect;
+		m_ListCtrl.GetSubItemRect(m_nEditRow, m_nEditCol, LVIR_BOUNDS, rect);
+
+		// --- CRITICAL FIX: Coordinate Translation ---
+		// Because the Dialog is now the parent of the ComboBox, we must 
+		// convert the List Control's internal coordinates to Dialog coordinates.
+		m_ListCtrl.ClientToScreen(&rect);
+		this->ScreenToClient(&rect);
+		// --------------------------------------------
+
+		// Make it drop down properly and align perfectly over the grid lines
+		rect.top -= 1;
+		rect.bottom += 150; // Give room for the drop-down menu
+
+		// Load existing text from table into combo
+		CString strCurrentText = m_ListCtrl.GetItemText(m_nEditRow, m_nEditCol);
+		m_ComboEditor.SetCheckedItemsFromText(strCurrentText);
+
+		// Show it
+		m_ComboEditor.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_SHOWWINDOW | SWP_NOZORDER);
+		m_ComboEditor.SetFocus();
+		m_ComboEditor.ShowDropDown(TRUE);
+	}
+	else
+	{
+		// User clicked elsewhere, just clear the trackers
+		m_nEditRow = -1;
+		m_nEditCol = -1;
+	}
+
+	*pResult = 0;
+}
+
+void CTestingButtonDlg::OnCbnCloseUpComboEditor()
+{
+	// TEMPORARY TEST: If this box does not pop up when you close the combobox, 
+	// your Message Map (Step 1) is broken!
+	// AfxMessageBox(_T("Saving and hiding!")); 
+
+	if (m_nEditRow != -1 && m_nEditCol != -1)
+	{
+		// Grab the text
+		CString strSelections = m_ComboEditor.GetCheckedItemsText();
+
+		// If the user unchecked everything, ensure it saves "None" instead of purely blank
+		if (strSelections.IsEmpty()) {
+			strSelections = _T("(None)");
+		}
+
+		// Save to the table
+		m_ListCtrl.SetItemText(m_nEditRow, m_nEditCol, strSelections);
+
+		// Force the List Control to wake up and paint the new text
+		m_ListCtrl.Update(m_nEditRow);
+		m_ListCtrl.RedrawItems(m_nEditRow, m_nEditRow);
+	}
+
+	// THIS IS THE MOST IMPORTANT LINE: It makes the combobox vanish!
+	m_ComboEditor.ShowWindow(SW_HIDE);
+
+	// Move focus back to the table
+	m_ListCtrl.SetFocus();
+
+	m_nEditRow = -1;
+	m_nEditCol = -1;
+}
+
+void CTestingButtonDlg::OnCbnKillFocusComboEditor()
+{
+	OnCbnCloseUpComboEditor();
+}
+
+void CTestingButtonDlg::OnLvnBeginScrollList(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	if (m_ComboEditor.IsWindowVisible()) {
+		OnCbnCloseUpComboEditor();
+	}
+	*pResult = 0;
 }
